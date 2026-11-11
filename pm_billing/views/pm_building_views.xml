@@ -11,7 +11,6 @@
                         <field name="uses_ncwsc"/>
                         <field name="uses_borehole"/>
                         <field name="water_category_id" options="{'no_create': True}"/>
-                        <field name="leak_threshold_pct"/>
                     </group>
                 </page>
             </xpath>

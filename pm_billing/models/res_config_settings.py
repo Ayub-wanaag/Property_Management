@@ -26,13 +26,6 @@ class ResConfigSettings(models.TransientModel):
         default="days",
         help="How the first month is charged when a tenant moves in part-way through it. Default: By days stayed.",
     )
-    pm_leak_threshold_pct = fields.Integer(
-        string="Water leak warning (%)",
-        config_parameter="pm_billing.leak_threshold_pct",
-        default=10,
-        help="Warn when the building's water loss is above this percentage. Example: 10. Default 10.",
-    )
-
     # ----- M-Pesa STK Push -----
     pm_mpesa_enabled = fields.Boolean(
         string="Pay with M-Pesa STK Push",
@@ -159,8 +152,8 @@ class ResConfigSettings(models.TransientModel):
                     _("Fill in the consumer key, consumer secret, shortcode and passkey before turning on M-Pesa STK Push. Then press Test connection.")
                 )
 
-    @api.constrains("pm_grace_days", "pm_invoice_lead_days", "pm_leak_threshold_pct")
+    @api.constrains("pm_grace_days", "pm_invoice_lead_days")
     def _check_pm_billing_settings(self):
         for settings in self:
-            if min(settings.pm_grace_days, settings.pm_invoice_lead_days, settings.pm_leak_threshold_pct) < 0:
+            if min(settings.pm_grace_days, settings.pm_invoice_lead_days) < 0:
                 raise ValidationError(_("Days and percentages cannot be below zero. Please check the Billing settings."))

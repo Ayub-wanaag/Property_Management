@@ -12,7 +12,7 @@ class WaterCommon(AccountTestInvoicingCommon):
         partner = cls.env["res.partner"].create({"name": "Water Owner"})
         cls.owner = cls.env["pm.owner"].create({"partner_id": partner.id})
         cls.building = cls.env["pm.building"].create(
-            {"name": "Water Plaza", "owner_id": cls.owner.id, "uses_ncwsc": True, "uses_borehole": True, "leak_threshold_pct": 10}
+            {"name": "Water Plaza", "owner_id": cls.owner.id, "uses_ncwsc": True, "uses_borehole": True}
         )
         cls.unit_type = cls.env["pm.unit.type"].create({"name": "Water type", "default_rent": 1000})
         cls.security = cls.env["product.product"].create({"name": "Water test security", "detailed_type": "service"})

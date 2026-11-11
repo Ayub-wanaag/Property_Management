@@ -11,7 +11,6 @@
         <field name="uses_ncwsc" eval="True"/>
         <field name="uses_borehole" eval="True"/>
         <field name="grace_days">5</field>
-        <field name="leak_threshold_pct">10</field>
         <field name="payment_instructions">M-Pesa Paybill 123456, account number is your house number (sample data)</field>
     </record>
 

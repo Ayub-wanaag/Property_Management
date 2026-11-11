@@ -48,11 +48,6 @@
                             </div>
                         </setting>
                     </block>
-                    <block title="Water (used for new buildings)" name="pm_billing_water">
-                        <setting string="Water leak warning (%)" help="Existing buildings keep their own value.">
-                            <field name="pm_leak_threshold_pct"/>
-                        </setting>
-                    </block>
                 </app>
             </xpath>
         </field>

@@ -6,8 +6,8 @@ from .water_common import WaterCommon
 
 @tagged("post_install", "-at_install")
 class TestWater(WaterCommon):
-    # ----- the rate and the leak gap -----
-    def test_rate_and_shared_loss(self):
+    # ----- the rate and the water lost -----
+    def test_rate_and_water_lost(self):
         self._read(self._meter(self.units[0], "SM-1"), 100)
         self._read(self._meter(self.units[1], "SM-2"), 105)
         cycle = self._cycle()
@@ -16,18 +16,13 @@ class TestWater(WaterCommon):
         self.assertEqual(cycle.rate, 110)
         self.assertEqual(cycle.loss_units, 15)
         self.assertAlmostEqual(cycle.loss_percent, 6.8, delta=0.05)
-        self.assertEqual((cycle.shared_loss_units, cycle.owner_loss_units), (15, 0))
-        self.assertEqual(cycle.shared_loss_cost, 1650)
-        self.assertEqual(cycle.flag, "shared")
 
-    def test_loss_above_the_limit_is_an_owner_cost(self):
+    def test_big_loss_does_not_change_the_rate(self):
         self._read(self._meter(self.units[0], "SM-1"), 100)
         self._read(self._meter(self.units[1], "SM-2"), 105)
         cycle = self._cycle(main=300)
         self.assertEqual(cycle.loss_units, 95)
-        self.assertEqual(cycle.shared_loss_units, 30)
-        self.assertEqual(cycle.owner_loss_units, 65)
-        self.assertEqual(cycle.flag, "owner")
+        self.assertEqual(cycle.rate, round(24200 / 300, 2))
 
     def test_one_source_uses_only_that_cost(self):
         self.building.uses_borehole = False

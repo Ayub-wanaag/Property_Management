@@ -32,7 +32,6 @@ class PmToday(models.TransientModel):
     owner_arrears_count = fields.Integer(string="In arrears (your buildings)", compute="_compute_counts")
     readings_missing_count = fields.Integer(string="Meter readings missing", compute="_compute_counts")
     missed_twice_count = fields.Integer(string="Meters missed twice in a row", compute="_compute_counts")
-    leak_count = fields.Integer(string="Water lost above the limit", compute="_compute_counts")
     approvals_count = fields.Integer(string="Repairs waiting for approval", compute="_compute_counts")
     urgent_count = fields.Integer(string="Urgent problems", compute="_compute_counts")
     moveouts_count = fields.Integer(string="Move-outs waiting", compute="_compute_counts")
@@ -58,7 +57,6 @@ class PmToday(models.TransientModel):
             today.vacant_count = self.env["pm.unit"].search_count([("status", "=", "vacant")]) if is_manager else 0
             today.readings_missing_count = len(self._meters_without_reading(month_start)) if is_caretaker else 0
             today.missed_twice_count = len(self._meters_missed_twice()) if is_manager else 0
-            today.leak_count = len(self._leaky_cycles()) if is_manager else 0
             tickets = self.env["pm.ticket"]
             open_states = ("new", "assigned", "in_progress", "waiting_approval")
             today.approvals_count = tickets.search_count([("state", "=", "waiting_approval")]) if is_manager else 0
@@ -114,12 +112,6 @@ class PmToday(models.TransientModel):
                 meters |= meter
         return meters
 
-    @api.model
-    def _leaky_cycles(self):
-        """Recent months where the water lost was above the building's limit."""
-        recent = self.env["pm.water.cycle"].search([], order="month desc, id desc", limit=6)
-        return recent.filtered(lambda cycle: cycle.flag == "owner")
-
     # ----- opening the page -----
     @api.model
     def action_open_today(self):
@@ -170,9 +162,6 @@ class PmToday(models.TransientModel):
 
     def action_open_missed_twice(self):
         return self._open("pm_billing.pm_meter_action", [("id", "in", self._meters_missed_twice().ids)])
-
-    def action_open_leaks(self):
-        return self._open("pm_billing.pm_water_cycle_action", [("id", "in", self._leaky_cycles().ids)])
 
     def action_open_approvals(self):
         return self._open("pm_maintenance.pm_ticket_approval_action")

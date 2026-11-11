@@ -3,13 +3,6 @@ from dateutil.relativedelta import relativedelta
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 
-LEAK_FLAGS = [
-    ("no_main", "Main meter not typed yet"),
-    ("shared", "Loss is within the limit (shared)"),
-    ("owner", "Loss is above the limit (owner pays the extra)"),
-]
-
-
 class PmWaterCycle(models.Model):
     """One month of water for one building: what the water cost, how much was used, and the rate per unit.
 
@@ -60,11 +53,6 @@ class PmWaterCycle(models.Model):
     rate = fields.Float(string="Rate per unit (KES)", compute="_compute_totals", digits=(16, 2))
     loss_units = fields.Float(string="Units lost", compute="_compute_totals")
     loss_percent = fields.Float(string="Lost %", compute="_compute_totals", digits=(16, 1))
-    shared_loss_units = fields.Float(string="Lost units shared by everyone", compute="_compute_totals")
-    owner_loss_units = fields.Float(string="Lost units above the limit", compute="_compute_totals")
-    shared_loss_cost = fields.Float(string="Shared loss (KES)", compute="_compute_totals")
-    owner_loss_cost = fields.Float(string="Owner pays (KES)", compute="_compute_totals")
-    flag = fields.Selection(LEAK_FLAGS, string="Leak check", compute="_compute_totals")
     invoiced = fields.Boolean(
         string="Invoices made",
         readonly=True,
@@ -94,7 +82,6 @@ class PmWaterCycle(models.Model):
     @api.depends(
         "building_id.uses_ncwsc",
         "building_id.uses_borehole",
-        "building_id.leak_threshold_pct",
         "ncwsc_cost",
         "borehole_cost",
         "main_meter_units",
@@ -115,17 +102,6 @@ class PmWaterCycle(models.Model):
             loss = max(main - billed, 0.0) if main else 0.0
             cycle.loss_units = loss
             cycle.loss_percent = (loss / main * 100.0) if main else 0.0
-            allowed = main * (building.leak_threshold_pct or 0) / 100.0
-            cycle.shared_loss_units = min(loss, allowed)
-            cycle.owner_loss_units = max(loss - allowed, 0.0)
-            cycle.shared_loss_cost = cycle.shared_loss_units * cycle.rate
-            cycle.owner_loss_cost = cycle.owner_loss_units * cycle.rate
-            if not main:
-                cycle.flag = "no_main"
-            elif cycle.owner_loss_units > 0:
-                cycle.flag = "owner"
-            else:
-                cycle.flag = "shared"
 
     # ----- checks -----
     @api.constrains("building_id")

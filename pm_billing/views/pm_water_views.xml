@@ -212,7 +212,6 @@
                 <field name="total_cost"/>
                 <field name="rate"/>
                 <field name="loss_percent"/>
-                <field name="flag" widget="badge" decoration-success="flag == 'shared'" decoration-danger="flag == 'owner'" decoration-warning="flag == 'no_main'"/>
                 <field name="invoiced" widget="boolean"/>
             </tree>
         </field>
@@ -249,13 +248,6 @@
                         <group>
                             <field name="loss_units"/>
                             <field name="loss_percent"/>
-                            <field name="flag" widget="badge" decoration-success="flag == 'shared'" decoration-danger="flag == 'owner'" decoration-warning="flag == 'no_main'"/>
-                        </group>
-                        <group>
-                            <field name="shared_loss_units"/>
-                            <field name="shared_loss_cost"/>
-                            <field name="owner_loss_units"/>
-                            <field name="owner_loss_cost"/>
                         </group>
                     </group>
                 </sheet>

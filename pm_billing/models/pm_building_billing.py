@@ -32,12 +32,6 @@ class PmBuildingBilling(models.Model):
         help="How many days after the due date before an unpaid invoice counts as arrears. Default 5.",
     )
 
-    leak_threshold_pct = fields.Integer(
-        string="Water leak limit %",
-        default=lambda self: param_int(self.env, "pm_billing.leak_threshold_pct", 10),
-        help="Water lost between the main meter and unit meters, up to this percent, is shared by everyone. Default 10.",
-    )
-
     prorate_first_month = fields.Boolean(
         string="Charge first month by days",
         default=lambda self: param_text(self.env, "pm_billing.first_month", "days") == "days",
@@ -87,10 +81,10 @@ class PmBuildingBilling(models.Model):
     )
     provider_ids = fields.One2many("pm.payment.provider", "building_id", string="Payment methods")
 
-    @api.constrains("grace_days", "leak_threshold_pct", "invoice_lead_days")
+    @api.constrains("grace_days", "invoice_lead_days")
     def _check_billing_not_negative(self):
         for building in self:
-            if min(building.grace_days, building.leak_threshold_pct, building.invoice_lead_days) < 0:
+            if min(building.grace_days, building.invoice_lead_days) < 0:
                 raise ValidationError(
                     _("Days and percentages cannot be below zero. Please enter 0 or more.")
                 )
