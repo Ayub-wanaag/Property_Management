@@ -1,0 +1,23 @@
+{
+    "name": "Maintenance",
+    "version": "17.0.1.0.0",
+    "category": "Services/Property",
+    "summary": "Problems reported by tenants and staff, repair approval, and the agents who fix things.",
+    "author": "Ayub",
+    "license": "LGPL-3",
+    "depends": ["pm_property"],
+    "data": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
+        "data/product_data.xml",
+        "views/pm_ticket_views.xml",
+        "views/pm_agent_views.xml",
+        "views/pm_building_views.xml",
+        "views/pm_lease_views.xml",
+        "views/tenant_portal_templates.xml",
+        "views/res_config_settings_views.xml",
+        "views/menus.xml",
+    ],
+    "application": True,
+    "installable": True,
+}

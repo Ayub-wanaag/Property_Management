@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="tenant_home_page_maintenance" name="Tenant home: problems" inherit_id="pm_property.tenant_home_page">
+        <xpath expr="//div[@id='pm_home_grid']/div[1]" position="before">
+                    <div class="col"><a href="/my/tenant/problems" class="btn btn-outline-secondary w-100 h-100 py-3 d-flex align-items-center justify-content-center text-center fw-semibold">Problems</a></div>
+        </xpath>
+    </template>
+
+    <template id="tenant_problems_page" name="Tenant problems">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="1"/>
+            <t t-set="additional_title">Problems</t>
+            <div class="container py-4 pm-portal">
+                <h1 class="h3 mb-3">Problems in my house</h1>
+                <div t-if="done == 'urgent'" class="alert alert-warning">
+                    We saved it as urgent. <strong>Please also phone now</strong>: see the numbers below.
+                </div>
+                <div t-elif="done" class="alert alert-success">Thank you. We received your report.</div>
+                <t t-call="pm_property.tenant_call_now_box"/>
+                <a href="/my/tenant/problems/new" class="btn btn-lg w-100 mb-3 pm-btn-primary">Report a problem</a>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h2 class="h5">My reports</h2>
+                        <p t-if="not tickets" class="text-muted mb-0">No reports yet. If something is broken, press <b>Report a problem</b>.</p>
+                        <div t-foreach="tickets" t-as="ticket" class="mb-3">
+                            <a t-attf-href="/my/tenant/problems/#{ticket.id}" class="fw-bold" t-out="ticket.name"/><br/>
+                            <span t-attf-class="badge #{badges[ticket.state][1]}" t-out="badges[ticket.state][0]"/>
+                            <span t-if="ticket.priority == 'urgent'" class="badge text-bg-danger">Urgent</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="/my/tenant" class="btn btn-outline-secondary btn-lg w-100">Back to my house</a>
+            </div>
+        </t>
+    </template>
+
+    <template id="tenant_problem_new_page" name="Report a problem">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="1"/>
+            <t t-set="additional_title">Report a problem</t>
+            <div class="container py-4 pm-portal">
+                <h1 class="h3 mb-3">Report a problem</h1>
+                <t t-call="pm_property.tenant_call_now_box"/>
+                <div t-if="error" class="alert alert-danger" t-out="error"/>
+                <form method="post" action="/my/tenant/problems/new" enctype="multipart/form-data" class="pm-photo-form">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="mb-3">
+                        <label class="form-label fs-5" for="name">What is wrong?</label>
+                        <input type="text" class="form-control form-control-lg" id="name" name="name" required="required"
+                               placeholder="e.g. Kitchen tap is leaking" t-att-value="post.get('name')"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fs-5" for="priority">How urgent is it?</label>
+                        <select class="form-select form-select-lg" id="priority" name="priority">
+                            <option value="normal" t-att-selected="post.get('priority') in (None, 'normal')">It can wait a day or two</option>
+                            <option value="low" t-att-selected="post.get('priority') == 'low'">Not urgent</option>
+                            <option value="urgent" t-att-selected="post.get('priority') == 'urgent'">Urgent: danger or damage now (I will also phone)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fs-5" for="description">More details (optional)</label>
+                        <textarea class="form-control" id="description" name="description" rows="4"><t t-out="post.get('description')"/></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fs-5" for="photos">Photos (optional, up to 5)</label>
+                        <input type="file" class="form-control form-control-lg" id="photos" name="photos" multiple="multiple" accept="image/*"/>
+                        <div class="form-text">Each photo can be up to <t t-out="max_mb"/> MB. They are made smaller on your phone first.</div>
+                    </div>
+                    <progress class="pm-progress w-100 d-none" max="100" value="0"/>
+                    <div class="pm-upload-message mt-2 text-muted"/>
+                    <button type="submit" class="btn btn-lg w-100 mt-2 pm-btn-primary">Send report</button>
+                </form>
+                <a href="/my/tenant/problems" class="btn btn-outline-secondary btn-lg w-100 mt-3">Back</a>
+            </div>
+        </t>
+    </template>
+
+    <template id="tenant_problem_detail_page" name="Problem detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="1"/>
+            <t t-set="additional_title">Problem</t>
+            <div class="container py-4 pm-portal">
+                <h1 class="h3 mb-2" t-out="ticket.name"/>
+                <p>
+                    <span t-attf-class="badge #{badges[ticket.state][1]}" t-out="badges[ticket.state][0]"/>
+                    <span t-if="ticket.priority == 'urgent'" class="badge text-bg-danger">Urgent</span>
+                </p>
+                <t t-if="ticket.priority == 'urgent' and ticket.state not in ('done', 'closed')">
+                    <t t-call="pm_property.tenant_call_now_box"/>
+                </t>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p class="mb-1 text-muted">Reported on <t t-out="ticket.create_date" t-options='{"widget": "date"}'/></p>
+                        <p t-if="ticket.description" style="white-space: pre-line;" t-out="ticket.description"/>
+                        <p t-if="ticket.state in ('new', 'assigned')" class="mb-0">We have your report and will deal with it.</p>
+                        <p t-if="ticket.state == 'waiting_approval'" class="mb-0">The repair needs approval before work starts.</p>
+                        <p t-if="ticket.state == 'in_progress'" class="mb-0">Work is under way.</p>
+                        <p t-if="ticket.state in ('done', 'closed')" class="mb-0">This is fixed.</p>
+                    </div>
+                </div>
+                <a href="/my/tenant/problems" class="btn btn-outline-secondary btn-lg w-100">Back to my reports</a>
+            </div>
+        </t>
+    </template>
+</odoo>

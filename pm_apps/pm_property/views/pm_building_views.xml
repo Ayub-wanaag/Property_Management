@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pm_building_view_list" model="ir.ui.view">
+        <field name="name">pm.building.list</field>
+        <field name="model">pm.building</field>
+        <field name="arch" type="xml">
+            <tree string="Buildings" delete="false">
+                <field name="name"/>
+                <field name="address"/>
+                <field name="owner_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_building_view_form" model="ir.ui.view">
+        <field name="name">pm.building.form</field>
+        <field name="model">pm.building</field>
+        <field name="arch" type="xml">
+            <form string="Building" delete="false">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Sunrise Apartments"/></h1>
+                    </div>
+                    <group>
+                        <group string="Where and who" name="pm_where">
+                            <field name="address"/>
+                            <field name="owner_id"/>
+                        </group>
+                        <group string="Rules (safe defaults, change only if you need to)" name="pm_rules">
+                            <field name="deposit_refund_days"/>
+                            <field name="max_photo_mb"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Help contacts" name="pm_help">
+                            <field name="help_contact_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="label"/>
+                                    <field name="phone"/>
+                                    <field name="hours"/>
+                                    <field name="when_to_call"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_building_action" model="ir.actions.act_window">
+        <field name="name">Buildings</field>
+        <field name="res_model">pm.building</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No buildings yet. Click <b>New</b> to add your first building.</p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Water: the rate and units are set on each invoice line, so the product price stays 0. -->
+    <record id="product_water" model="product.product">
+        <field name="name">Water</field>
+        <field name="detailed_type">service</field>
+        <field name="list_price">0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="pm_is_water" eval="True"/>
+    </record>
+
+    <!-- Generator plan: a normal product with a monthly price. Change the price here or in the product list. -->
+    <record id="product_generator" model="product.product">
+        <field name="name">Generator plan</field>
+        <field name="detailed_type">service</field>
+        <field name="list_price">800</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="pm_optional" eval="True"/>
+        <field name="pm_subscription" eval="True"/>
+    </record>
+
+    <!-- Maintenance fund: a small fixed monthly item every unit pays, for shared plumbing, electrical and CCTV.
+         Add it to a unit type's service charge items. The amount can differ by unit type. -->
+    <record id="product_maintenance_fund" model="product.product">
+        <field name="name">Maintenance fund (plumbing, electrical, CCTV)</field>
+        <field name="detailed_type">service</field>
+        <field name="list_price">0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+</odoo>

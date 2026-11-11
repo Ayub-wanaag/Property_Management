@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_receipt" model="ir.actions.report">
+        <field name="name">Receipt</field>
+        <field name="model">pm.receipt</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pm_billing.report_receipt</field>
+        <field name="report_file">pm_billing.report_receipt</field>
+        <field name="print_report_name">'Receipt %s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="model_pm_receipt"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_receipt">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-size: 18px; line-height: 1.7;">
+                        <h1 style="font-size: 34px;">Receipt <t t-out="o.name"/></h1>
+                        <p>Date: <strong><t t-out="o.date" t-options='{"widget": "date"}'/></strong></p>
+                        <p>Received from: <strong><t t-out="o.tenant_id.name"/></strong></p>
+                        <p>House: <strong><t t-out="o.lease_id.unit_id.display_name"/></strong></p>
+                        <p>For invoice: <strong><t t-out="o.invoice_number"/></strong> (<t t-out="o.kind"/>)</p>
+                        <p>Paid by: <strong><t t-out="dict(o._fields['method'].selection).get(o.method)"/></strong>
+                            <t t-if="o.transaction_code"> &#8211; code <strong><t t-out="o.transaction_code"/></strong></t></p>
+                        <p style="font-size: 30px; margin-top: 24px;">Amount received:
+                            <strong><t t-out="o.amount" t-options='{"widget": "monetary", "display_currency": o.invoice_id.currency_id}'/></strong></p>
+                        <p style="margin-top: 40px;">Received by: <t t-out="o.recorded_by.name"/></p>
+                        <p class="text-muted">Thank you.</p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

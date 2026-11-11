@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pm_owner_view_list" model="ir.ui.view">
+        <field name="name">pm.owner.list</field>
+        <field name="model">pm.owner</field>
+        <field name="arch" type="xml">
+            <tree string="Owners" delete="false">
+                <field name="partner_id"/>
+                <field name="commission_rate" optional="hide"/>
+                <field name="is_default"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_owner_view_form" model="ir.ui.view">
+        <field name="name">pm.owner.form</field>
+        <field name="model">pm.owner</field>
+        <field name="arch" type="xml">
+            <form string="Owner" delete="false">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <field name="show_commission" invisible="1"/>
+                    <group>
+                        <group string="Who">
+                            <field name="partner_id"/>
+                            <field name="is_default"/>
+                        </group>
+                        <group string="Money">
+                            <field name="commission_rate" invisible="not show_commission"/>
+                            <field name="payout_notes"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Buildings">
+                            <field name="building_ids" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_owner_action" model="ir.actions.act_window">
+        <field name="name">Owners</field>
+        <field name="res_model">pm.owner</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No owners yet. Click <b>New</b> to add the owner of a building.</p>
+        </field>
+    </record>
+</odoo>

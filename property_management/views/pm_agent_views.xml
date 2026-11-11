@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pm_agent_view_list" model="ir.ui.view">
+        <field name="name">pm.agent.list</field>
+        <field name="model">pm.agent</field>
+        <field name="arch" type="xml">
+            <tree string="Agents">
+                <field name="name"/>
+                <field name="agent_type"/>
+                <field name="type_other"/>
+                <field name="phone"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_agent_view_form" model="ir.ui.view">
+        <field name="name">pm.agent.form</field>
+        <field name="model">pm.agent</field>
+        <field name="arch" type="xml">
+            <form string="Agent" delete="false">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Joseph, or G4S"/></h1>
+                    </div>
+                    <group>
+                        <group string="What they do">
+                            <field name="agent_type"/>
+                            <field name="type_other" invisible="agent_type != 'other'" placeholder="e.g. Security"/>
+                        </group>
+                        <group string="How to reach them">
+                            <field name="phone"/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Anything useful about this agent"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_agent_view_search" model="ir.ui.view">
+        <field name="name">pm.agent.search</field>
+        <field name="model">pm.agent</field>
+        <field name="arch" type="xml">
+            <search string="Agents">
+                <field name="name"/>
+                <field name="type_other"/>
+                <filter name="filter_plumbing" string="Plumbing" domain="[('agent_type', '=', 'plumbing')]"/>
+                <filter name="filter_electrical" string="Electrical" domain="[('agent_type', '=', 'electrical')]"/>
+                <filter name="filter_carpentry" string="Carpentry" domain="[('agent_type', '=', 'carpentry')]"/>
+                <filter name="filter_other" string="Other" domain="[('agent_type', '=', 'other')]"/>
+                <separator/>
+                <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group by">
+                    <filter name="group_type" string="Type" context="{'group_by': 'agent_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="pm_agent_action" model="ir.actions.act_window">
+        <field name="name">Agents</field>
+        <field name="res_model">pm.agent</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No agents yet. Click <b>New</b>, type the name, then pick the type: Plumbing, Electrical, Carpentry or Other (like G4S).</p>
+        </field>
+    </record>
+</odoo>

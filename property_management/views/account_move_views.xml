@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pm_account_move_view_form" model="ir.ui.view">
+        <field name="name">account.move.form.property.management</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@id='header_left_group']" position="inside">
+                <field name="pm_lease_id" invisible="move_type != 'out_invoice'" options="{'no_create': True}"/>
+                <field name="pm_kind" invisible="not pm_lease_id"/>
+                <field name="pm_extended" invisible="1"/>
+                <field name="pm_has_water" invisible="1"/>
+                <field name="pm_original_due_date" invisible="not pm_extended"/>
+                <field name="pm_period_start" invisible="not pm_period_start"/>
+                <field name="pm_period_end" invisible="not pm_period_start"/>
+            </xpath>
+            <!-- Water has its own tab with its own columns, so it does not crowd the other costs -->
+            <xpath expr="//page[@name='invoice_tab']" position="after">
+                <page string="Water" name="pm_water_tab" invisible="not pm_has_water">
+                    <field name="pm_water_line_ids" nolabel="1" readonly="1">
+                        <tree create="false" delete="false" edit="false" decoration-warning="pm_is_estimated">
+                            <field name="pm_meter_serial" string="Meter"/>
+                            <field name="pm_prev_reading"/>
+                            <field name="pm_curr_reading"/>
+                            <field name="quantity" string="Units"/>
+                            <field name="price_unit" string="Rate"/>
+                            <field name="price_subtotal" string="Amount"/>
+                            <field name="pm_is_estimated" widget="boolean"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

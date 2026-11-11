@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pm_mpesa_transaction_view_list" model="ir.ui.view">
+        <field name="name">pm.mpesa.transaction.list</field>
+        <field name="model">pm.mpesa.transaction</field>
+        <field name="arch" type="xml">
+            <tree string="M-Pesa STK payments" create="false" delete="false" edit="false">
+                <field name="create_date" string="Asked on"/>
+                <field name="tenant_id"/>
+                <field name="lease_id"/>
+                <field name="invoice_id"/>
+                <field name="phone"/>
+                <field name="amount"/>
+                <field name="paid_amount"/>
+                <field name="mpesa_receipt"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'pending'"
+                       decoration-success="state == 'success'"
+                       decoration-warning="state == 'review'"
+                       decoration-danger="state == 'failed'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_mpesa_transaction_view_form" model="ir.ui.view">
+        <field name="name">pm.mpesa.transaction.form</field>
+        <field name="model">pm.mpesa.transaction</field>
+        <field name="arch" type="xml">
+            <form string="M-Pesa STK payment" create="false" delete="false" edit="false">
+                <header>
+                    <button name="action_check_status" type="object" string="Ask Safaricom what happened" class="btn-secondary"
+                            invisible="state != 'pending'"
+                            help="Use this when the tenant says they paid but nothing arrived here."/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,success"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-warning" role="alert" invisible="state != 'review'">
+                        <field name="note" nolabel="1"/>
+                    </div>
+                    <group>
+                        <group string="Who and what">
+                            <field name="tenant_id"/>
+                            <field name="lease_id"/>
+                            <field name="invoice_id"/>
+                            <field name="phone"/>
+                            <field name="amount"/>
+                        </group>
+                        <group string="Result">
+                            <field name="paid_amount"/>
+                            <field name="mpesa_receipt"/>
+                            <field name="claim_id"/>
+                            <field name="receipt_id"/>
+                            <field name="result_code"/>
+                            <field name="result_desc"/>
+                        </group>
+                    </group>
+                    <group string="Safaricom references">
+                        <field name="merchant_request_id"/>
+                        <field name="checkout_request_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_mpesa_transaction_view_search" model="ir.ui.view">
+        <field name="name">pm.mpesa.transaction.search</field>
+        <field name="model">pm.mpesa.transaction</field>
+        <field name="arch" type="xml">
+            <search string="Search M-Pesa payments">
+                <field name="tenant_id"/>
+                <field name="invoice_id"/>
+                <field name="mpesa_receipt"/>
+                <field name="phone"/>
+                <filter name="filter_pending" string="Waiting for the tenant" domain="[('state', '=', 'pending')]"/>
+                <filter name="filter_success" string="Paid" domain="[('state', '=', 'success')]"/>
+                <filter name="filter_review" string="Paid, needs checking" domain="[('state', '=', 'review')]"/>
+                <filter name="filter_failed" string="Failed or cancelled" domain="[('state', '=', 'failed')]"/>
+                <group expand="0" string="Group by">
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_building" string="Building" context="{'group_by': 'building_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="pm_mpesa_transaction_action" model="ir.actions.act_window">
+        <field name="name">M-Pesa STK payments</field>
+        <field name="res_model">pm.mpesa.transaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="pm_mpesa_transaction_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No M-Pesa STK payments yet.</p>
+            <p>When a tenant presses Pay now on an invoice, the request and its result are listed here.</p>
+        </field>
+    </record>
+
+    <!-- Billing settings, one click from the Billing app (administrators) -->
+    <record id="pm_billing_settings_action" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'pm_billing', 'bin_size': False}</field>
+    </record>
+</odoo>

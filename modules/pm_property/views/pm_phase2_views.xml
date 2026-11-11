@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pm_deposit_view_list" model="ir.ui.view">
+        <field name="name">pm.deposit.list</field>
+        <field name="model">pm.deposit</field>
+        <field name="arch" type="xml">
+            <tree string="Deposits" create="false" delete="false">
+                <field name="unit_id"/>
+                <field name="tenant_id"/>
+                <field name="amount"/>
+                <field name="total_deductions"/>
+                <field name="refund_amount"/>
+                <field name="refund_due_date"/>
+                <field name="state" widget="badge" decoration-info="state == 'pending'" decoration-success="state == 'held'"
+                       decoration-warning="state in ('refund_pending', 'disputed')" decoration-muted="state == 'refunded'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_deposit_view_form" model="ir.ui.view">
+        <field name="name">pm.deposit.form</field>
+        <field name="model">pm.deposit</field>
+        <field name="arch" type="xml">
+            <form string="Deposit" delete="false">
+                <header>
+                    <button name="action_receive" type="object" string="Money received" class="btn-primary"
+                            invisible="state != 'pending'"
+                            confirm="This marks the deposit as received and held for the tenant. Continue?"/>
+                    <button name="action_add_unpaid_balances" type="object" string="Take off unpaid invoices"
+                            invisible="state not in ('held', 'refund_pending', 'disputed')"/>
+                    <button name="action_prepare_refund" type="object" string="Prepare the refund" class="btn-primary"
+                            invisible="state != 'held'"
+                            confirm="This fixes the refund date. Add every deduction first. Continue?"/>
+                    <button name="action_mark_refunded" type="object" string="Mark as refunded" class="btn-primary"
+                            invisible="state != 'refund_pending'"
+                            confirm="This will mark the deposit as refunded. Continue?"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,held,refund_pending,refunded"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        A deposit is the tenant's money that we hold. It is not income and it is never put on an invoice.
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="tenant_owes == 0">
+                        The deductions are more than the deposit. The tenant still owes
+                        <field name="tenant_owes" readonly="1" nolabel="1"/> KES.
+                    </div>
+                    <group>
+                        <group string="Who">
+                            <field name="lease_id" options="{'no_create': True}" readonly="state != 'pending'"/>
+                            <field name="tenant_id"/>
+                            <field name="unit_id"/>
+                        </group>
+                        <group string="Money">
+                            <field name="amount" readonly="state not in ('pending', 'held')"/>
+                            <field name="total_deductions"/>
+                            <field name="refund_amount" class="fw-bold"/>
+                            <field name="received_on"/>
+                            <field name="refund_due_date"/>
+                            <field name="refunded_on"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Deductions">
+                            <p class="text-muted">Everything taken off the deposit. The tenant can read these and can dispute them.</p>
+                            <field name="deduction_ids">
+                                <tree editable="bottom">
+                                    <field name="reason"/>
+                                    <field name="description"/>
+                                    <field name="amount" sum="Total"/>
+                                    <field name="attachment_ids" widget="many2many_binary" string="Photos"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Disputes">
+                            <field name="dispute_ids" readonly="1">
+                                <tree>
+                                    <field name="create_date" string="Sent"/>
+                                    <field name="explanation"/>
+                                    <field name="state" widget="badge" decoration-warning="state == 'open'" decoration-success="state == 'resolved'"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_deposit_view_search" model="ir.ui.view">
+        <field name="name">pm.deposit.search</field>
+        <field name="model">pm.deposit</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="tenant_id"/>
+                <field name="unit_id"/>
+                <filter name="held" string="Held" domain="[('state', '=', 'held')]"/>
+                <filter name="refund" string="Refund to pay" domain="[('state', '=', 'refund_pending')]"/>
+                <filter name="disputed" string="Disputed" domain="[('state', '=', 'disputed')]"/>
+                <group expand="0" string="Group by">
+                    <filter name="by_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="by_building" string="Building" context="{'group_by': 'building_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="pm_deposit_action" model="ir.actions.act_window">
+        <field name="name">Deposits</field>
+        <field name="res_model">pm.deposit</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No deposits yet.</p>
+            <p>A deposit is made when a lease starts and the lease has a deposit amount.</p>
+        </field>
+    </record>
+
+    <record id="pm_deposit_dispute_view_form" model="ir.ui.view">
+        <field name="name">pm.deposit.dispute.form</field>
+        <field name="model">pm.deposit.dispute</field>
+        <field name="arch" type="xml">
+            <form string="Dispute" create="false" delete="false">
+                <header>
+                    <button name="action_resolve" type="object" string="Decide" class="btn-primary" invisible="state != 'open'"
+                            confirm="The tenant will see your decision. Continue?"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="deposit_id"/>
+                        <field name="tenant_id"/>
+                        <field name="deduction_id"/>
+                        <field name="explanation" readonly="1"/>
+                        <field name="resolution_note" readonly="state != 'open'" placeholder="What was decided and why"/>
+                        <field name="resolved_by"/>
+                        <field name="resolved_on"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_deposit_dispute_view_list" model="ir.ui.view">
+        <field name="name">pm.deposit.dispute.list</field>
+        <field name="model">pm.deposit.dispute</field>
+        <field name="arch" type="xml">
+            <tree string="Disputes" create="false" delete="false">
+                <field name="create_date" string="Sent"/>
+                <field name="tenant_id"/>
+                <field name="explanation"/>
+                <field name="state" widget="badge" decoration-warning="state == 'open'" decoration-success="state == 'resolved'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_deposit_dispute_action" model="ir.actions.act_window">
+        <field name="name">Deposit disputes</field>
+        <field name="res_model">pm.deposit.dispute</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', '=', 'open')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No disputes waiting.</p>
+            <p>When a tenant disagrees with a deduction, the reason they wrote appears here.</p>
+        </field>
+    </record>
+
+    <record id="pm_inspection_view_list" model="ir.ui.view">
+        <field name="name">pm.inspection.list</field>
+        <field name="model">pm.inspection</field>
+        <field name="arch" type="xml">
+            <tree string="Inspections" delete="false">
+                <field name="date"/>
+                <field name="unit_id"/>
+                <field name="tenant_id"/>
+                <field name="kind"/>
+                <field name="missing_rooms"/>
+                <field name="state" widget="badge" decoration-warning="state == 'draft'" decoration-success="state == 'done'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_inspection_view_form" model="ir.ui.view">
+        <field name="name">pm.inspection.form</field>
+        <field name="model">pm.inspection</field>
+        <field name="arch" type="xml">
+            <form string="Inspection" delete="false">
+                <header>
+                    <button name="action_done" type="object" string="Finish inspection" class="btn-primary" invisible="state == 'done'"/>
+                    <button name="action_reopen" type="object" string="Re-open" invisible="state != 'done'"
+                            groups="pm_property.group_pm_manager"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <field name="unit_type_id" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" invisible="not missing_rooms or state == 'done'">
+                        Every room needs at least one photo. Still missing: <field name="missing_rooms" readonly="1" nolabel="1"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="lease_id" options="{'no_create': True}" readonly="state == 'done'"/>
+                            <field name="kind" readonly="state == 'done'"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="unit_id"/>
+                            <field name="tenant_id"/>
+                        </group>
+                    </group>
+                    <field name="photo_ids" mode="kanban" readonly="state == 'done'">
+                        <kanban>
+                            <field name="room_name"/>
+                            <field name="image"/>
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div class="oe_kanban_global_click">
+                                        <field name="image" widget="image" options="{'size': [200, 150]}"/>
+                                        <div><strong><field name="room_name"/></strong></div>
+                                        <div class="text-muted"><field name="note"/></div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                        <form>
+                            <group>
+                                <field name="room_id" options="{'no_create': True}"
+                                       domain="[('unit_type_id', '=', parent.unit_type_id)]"/>
+                                <field name="image" widget="image" options="{'size': [400, 300]}"/>
+                                <field name="note"/>
+                            </group>
+                        </form>
+                    </field>
+                    <field name="notes" placeholder="Notes"/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_inspection_action" model="ir.actions.act_window">
+        <field name="name">Inspections</field>
+        <field name="res_model">pm.inspection</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No inspections yet.</p>
+            <p>A move-in inspection is opened when a lease starts. Add one photo of every room.</p>
+        </field>
+    </record>
+
+    <record id="pm_move_out_view_list" model="ir.ui.view">
+        <field name="name">pm.move.out.request.list</field>
+        <field name="model">pm.move.out.request</field>
+        <field name="arch" type="xml">
+            <tree string="Move-outs" create="false" delete="false">
+                <field name="create_date" string="Asked on"/>
+                <field name="unit_id"/>
+                <field name="tenant_id"/>
+                <field name="requested_date"/>
+                <field name="short_notice" widget="boolean"/>
+                <field name="state" widget="badge" decoration-info="state in ('requested', 'photos_uploaded')"
+                       decoration-warning="state == 'acknowledged'" decoration-success="state in ('reviewed', 'completed')"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_move_out_view_form" model="ir.ui.view">
+        <field name="name">pm.move.out.request.form</field>
+        <field name="model">pm.move.out.request</field>
+        <field name="arch" type="xml">
+            <form string="Move-out" create="false" delete="false">
+                <header>
+                    <button name="action_acknowledge" type="object" string="Acknowledge" class="btn-primary" invisible="state != 'requested'"/>
+                    <button name="action_review" type="object" string="Photos reviewed" class="btn-primary" invisible="state != 'photos_uploaded'"
+                            confirm="This confirms you compared the move-out photos with the move-in photos. Continue?"/>
+                    <button name="action_open_deposit" type="object" string="Open the deposit"
+                            invisible="state not in ('photos_uploaded', 'reviewed')" groups="pm_property.group_pm_accountant"/>
+                    <button name="action_complete" type="object" string="Complete the move-out" class="btn-primary" invisible="state != 'reviewed'"
+                            confirm="This ends the lease, makes the unit vacant and turns off the tenant's login. Continue?"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <field name="short_notice" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" invisible="not short_notice">
+                        The tenant gave less notice than the lease asks for.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="lease_id"/>
+                            <field name="tenant_id"/>
+                            <field name="requested_date"/>
+                        </group>
+                        <group>
+                            <field name="deposit_id" groups="pm_property.group_pm_accountant"/>
+                            <field name="move_in_inspection_id"/>
+                            <field name="inspection_id"/>
+                        </group>
+                    </group>
+                    <field name="tenant_note" readonly="1" placeholder="No note from the tenant"/>
+                    <notebook>
+                        <page string="Compare the photos">
+                            <field name="comparison_html" nolabel="1" widget="html"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_move_out_action" model="ir.actions.act_window">
+        <field name="name">Move-outs</field>
+        <field name="res_model">pm.move.out.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No move-outs waiting.</p>
+            <p>When a tenant asks to move out from their portal, it appears here.</p>
+        </field>
+    </record>
+
+    <record id="pm_move_out_waiting_action" model="ir.actions.act_window">
+        <field name="name">Move-outs waiting</field>
+        <field name="res_model">pm.move.out.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', 'in', ('requested', 'photos_uploaded', 'reviewed'))]</field>
+    </record>
+
+    <record id="pm_help_guide_view_list" model="ir.ui.view">
+        <field name="name">pm.help.guide.list</field>
+        <field name="model">pm.help.guide</field>
+        <field name="arch" type="xml">
+            <tree string="Help">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="summary"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_help_guide_view_form" model="ir.ui.view">
+        <field name="name">pm.help.guide.form</field>
+        <field name="model">pm.help.guide</field>
+        <field name="arch" type="xml">
+            <form string="Help">
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <p class="text-muted"><field name="summary" readonly="1"/></p>
+                    <field name="steps" widget="html" readonly="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_help_guide_action" model="ir.actions.act_window">
+        <field name="name">Help</field>
+        <field name="res_model">pm.help.guide</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No guides yet.</p>
+        </field>
+    </record>
+
+    <record id="pm_document_view_list" model="ir.ui.view">
+        <field name="name">pm.document.list</field>
+        <field name="model">pm.document</field>
+        <field name="arch" type="xml">
+            <tree string="Documents">
+                <field name="name"/>
+                <field name="category"/>
+                <field name="building_id"/>
+                <field name="tenant_id"/>
+                <field name="visibility"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_document_view_form" model="ir.ui.view">
+        <field name="name">pm.document.form</field>
+        <field name="model">pm.document</field>
+        <field name="arch" type="xml">
+            <form string="Document">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title"><h1><field name="name" placeholder="e.g. Lease agreement A12"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="category"/>
+                            <field name="file" filename="file_name"/>
+                            <field name="file_name" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="building_id" options="{'no_create': True}"/>
+                            <field name="lease_id" options="{'no_create': True}"/>
+                            <field name="visibility"/>
+                            <field name="visible_to_owner"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_document_view_search" model="ir.ui.view">
+        <field name="name">pm.document.search</field>
+        <field name="model">pm.document</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="tenant_id"/>
+                <field name="building_id"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group by">
+                    <filter name="by_category" string="Kind" context="{'group_by': 'category'}"/>
+                    <filter name="by_building" string="Building" context="{'group_by': 'building_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="pm_document_action" model="ir.actions.act_window">
+        <field name="name">Documents</field>
+        <field name="res_model">pm.document</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No documents yet.</p>
+            <p>Click <b>New</b> to keep a lease, a permit or any other paper in one place.</p>
+        </field>
+    </record>
+</odoo>

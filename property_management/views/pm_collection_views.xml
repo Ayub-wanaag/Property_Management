@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===== Overdue invoices: shared form and search ===== -->
+    <record id="pm_overdue_invoice_view_form" model="ir.ui.view">
+        <field name="name">pm.overdue.invoice.form</field>
+        <field name="model">pm.overdue.invoice</field>
+        <field name="arch" type="xml">
+            <form string="Overdue invoice" create="false" edit="false" delete="false">
+                <header>
+                    <button name="action_log_contact" type="object" string="Log contact" class="btn-primary"/>
+                    <button name="action_record_payment" type="object" string="Record payment"
+                            groups="property_management.group_pm_accountant"/>
+                    <button name="action_open_invoice" type="object" string="Open invoice"
+                            groups="property_management.group_pm_accountant"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Who">
+                            <field name="lease_id"/>
+                            <field name="tenant_id"/>
+                            <field name="building_id"/>
+                        </group>
+                        <group string="What is owed">
+                            <field name="invoice_number"/>
+                            <field name="kind"/>
+                            <field name="due_date"/>
+                            <field name="days_past_due"/>
+                            <field name="amount_due"/>
+                            <field name="stage"/>
+                        </group>
+                    </group>
+                    <group string="Contact so far">
+                        <field name="contact_count"/>
+                        <field name="last_contact"/>
+                        <field name="promised_date"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_overdue_invoice_view_search" model="ir.ui.view">
+        <field name="name">pm.overdue.invoice.search</field>
+        <field name="model">pm.overdue.invoice</field>
+        <field name="arch" type="xml">
+            <search string="Search overdue invoices">
+                <field name="tenant_id"/>
+                <field name="lease_id" string="Unit"/>
+                <field name="invoice_number"/>
+                <field name="building_id"/>
+                <filter name="filter_not_contacted" string="Not contacted yet" domain="[('contact_count', '=', 0)]"/>
+                <group expand="0" string="Group by">
+                    <filter name="group_age" string="Age" context="{'group_by': 'age_bucket'}"/>
+                    <filter name="group_building" string="Building" context="{'group_by': 'building_id'}"/>
+                    <filter name="group_tenant" string="Tenant" context="{'group_by': 'tenant_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ===== Chase list (caretaker): in the grace period ===== -->
+    <record id="pm_chase_list_view_list" model="ir.ui.view">
+        <field name="name">pm.overdue.invoice.chase.list</field>
+        <field name="model">pm.overdue.invoice</field>
+        <field name="arch" type="xml">
+            <tree string="Chase list" create="false" delete="false">
+                <field name="lease_id"/>
+                <field name="tenant_id"/>
+                <field name="invoice_number"/>
+                <field name="kind"/>
+                <field name="due_date"/>
+                <field name="days_past_due"/>
+                <field name="amount_due"/>
+                <field name="last_contact"/>
+                <field name="promised_date"/>
+                <button name="action_log_contact" type="object" string="Log contact" icon="fa-phone"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_chase_list_action" model="ir.actions.act_window">
+        <field name="name">Chase list</field>
+        <field name="res_model">pm.overdue.invoice</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('pm_chase_list_view_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('pm_overdue_invoice_view_form')})]"/>
+        <field name="search_view_id" ref="pm_overdue_invoice_view_search"/>
+        <field name="domain">[('stage', '=', 'grace')]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Nobody to chase right now.</p>
+            <p>Tenants appear here when rent is past its due date but still inside the grace period.</p>
+        </field>
+    </record>
+
+    <!-- ===== Arrears view (manager, accountant): past the grace period ===== -->
+    <record id="pm_arrears_view_list" model="ir.ui.view">
+        <field name="name">pm.overdue.invoice.arrears.list</field>
+        <field name="model">pm.overdue.invoice</field>
+        <field name="arch" type="xml">
+            <tree string="Arrears" create="false" delete="false">
+                <field name="lease_id"/>
+                <field name="tenant_id"/>
+                <field name="invoice_number"/>
+                <field name="kind"/>
+                <field name="due_date"/>
+                <field name="days_past_due"/>
+                <field name="amount_due" sum="Total still to pay"/>
+                <field name="contact_count"/>
+                <field name="last_contact"/>
+                <field name="promised_date"/>
+                <button name="action_log_contact" type="object" string="Log contact" icon="fa-phone"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_arrears_action" model="ir.actions.act_window">
+        <field name="name">Arrears</field>
+        <field name="res_model">pm.overdue.invoice</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('pm_arrears_view_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('pm_overdue_invoice_view_form')})]"/>
+        <field name="search_view_id" ref="pm_overdue_invoice_view_search"/>
+        <field name="domain">[('stage', '=', 'arrears')]</field>
+        <field name="context">{'search_default_group_age': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No tenants in arrears.</p>
+            <p>Invoices appear here once they are unpaid after the grace period.</p>
+        </field>
+    </record>
+
+    <!-- ===== Contact log ===== -->
+    <record id="pm_chase_log_view_list" model="ir.ui.view">
+        <field name="name">pm.chase.log.list</field>
+        <field name="model">pm.chase.log</field>
+        <field name="arch" type="xml">
+            <tree string="Contact log" create="false" delete="false">
+                <field name="date"/>
+                <field name="user_id"/>
+                <field name="lease_id"/>
+                <field name="invoice_number"/>
+                <field name="channel"/>
+                <field name="promised_date"/>
+                <field name="note"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pm_chase_log_view_form" model="ir.ui.view">
+        <field name="name">pm.chase.log.form</field>
+        <field name="model">pm.chase.log</field>
+        <field name="arch" type="xml">
+            <form string="Log contact" create="false" delete="false">
+                <group>
+                    <group>
+                        <field name="lease_id"/>
+                        <field name="invoice_number"/>
+                    </group>
+                    <group>
+                        <field name="channel"/>
+                        <field name="promised_date"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="note" placeholder="e.g. Said she will pay on Friday"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_chase_log_action" model="ir.actions.act_window">
+        <field name="name">Contact log</field>
+        <field name="res_model">pm.chase.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No contacts logged yet.</p>
+            <p>Open the Chase list and press the phone icon to log a call, WhatsApp or visit.</p>
+        </field>
+    </record>
+</odoo>

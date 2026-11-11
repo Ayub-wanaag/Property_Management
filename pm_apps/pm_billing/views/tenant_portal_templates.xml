@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="tenant_home_page_billing" name="Tenant home: money" inherit_id="pm_property.tenant_home_page">
+        <xpath expr="//div[@id='pm_home_money']" position="inside">
+                <!-- 2. How to pay, then the main action -->
+                <div class="card mb-3" t-if="providers or lease.building_id.payment_instructions">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">How to pay</h2>
+                        <div t-foreach="providers" t-as="provider" class="pm-row">
+                            <strong t-out="provider.name"/>
+                            <div class="text-muted" style="white-space: pre-line;" t-out="provider.details"/>
+                        </div>
+                        <p t-if="not providers" class="mb-0" style="white-space: pre-line;" t-out="lease.building_id.payment_instructions"/>
+                    </div>
+                </div>
+
+                <a href="/my/tenant/pay" class="btn btn-lg w-100 py-4 fs-4 mb-3 pm-btn-primary">I have paid: send proof</a>
+
+        </xpath>
+        <xpath expr="//div[@id='pm_home_grid']/div[1]" position="before">
+                    <div class="col"><a href="/my/invoices" class="btn btn-outline-secondary w-100 h-100 py-3 d-flex align-items-center justify-content-center text-center fw-semibold">My invoices</a></div>
+                    <div class="col"><a href="/my/tenant/more-time" class="btn btn-outline-secondary w-100 h-100 py-3 d-flex align-items-center justify-content-center text-center fw-semibold">Ask for more time</a></div>
+        </xpath>
+        <xpath expr="//div[@id='pm_home_extra']" position="inside">
+                <!-- 4. Things that only matter sometimes -->
+                <div class="card mb-3" t-if="generator_product">
+                    <div class="card-body">
+                        <h2 class="h5">Generator plan</h2>
+                        <p class="mb-2">
+                            Backup power when the lights go out:
+                            <strong t-out="generator_product.list_price" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                            a month, added to your service charge invoice.
+                        </p>
+                        <div t-if="gen_message == 'saved'" class="alert alert-success">Saved. Your choice is on your service charge invoice.</div>
+                        <div t-if="gen_message == 'locked'" class="alert alert-warning">This period's invoice is already paid, so the choice is locked until your next rent day.</div>
+                        <p class="mb-3 d-flex align-items-center gap-2">
+                            <span class="text-muted">Your status</span>
+                            <span t-if="generator.on_plan" class="badge text-bg-success">On the plan</span>
+                            <span t-else="" class="badge text-bg-secondary">Not on the plan</span>
+                        </p>
+                        <p class="text-muted" t-if="generator.locked">Locked until <t t-out="generator.period_end" t-options='{"widget": "date"}'/>, because this period's invoice is paid.</p>
+                        <form t-else="" method="post" action="/my/tenant/generator">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <t t-if="generator.on_plan">
+                                <input type="hidden" name="on" value="0"/>
+                                <button type="submit" class="btn btn-outline-secondary btn-lg w-100 py-3">Switch the generator plan off</button>
+                            </t>
+                            <t t-else="">
+                                <input type="hidden" name="on" value="1"/>
+                                <button type="submit" class="btn btn-lg w-100 py-3 pm-btn-primary">Switch the generator plan on</button>
+                            </t>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mb-3" t-if="claims or requests">
+                    <div class="card-body">
+                        <h2 class="h5 mb-3">Your recent messages to the office</h2>
+                        <div t-foreach="claims" t-as="claim" class="pm-row d-flex justify-content-between align-items-start gap-3">
+                            <div>
+                                Payment of <strong t-out="claim.amount" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                <div class="text-muted small" t-out="dict(claim._fields['kind'].selection).get(claim.kind)"/>
+                                <div class="text-danger small" t-if="claim.state == 'rejected' and claim.rejection_reason" t-out="claim.rejection_reason"/>
+                            </div>
+                            <span t-attf-class="badge flex-shrink-0 #{claim_badges[claim.state][1]}" t-out="claim_badges[claim.state][0]"/>
+                        </div>
+                        <div t-foreach="requests" t-as="req" class="pm-row d-flex justify-content-between align-items-start gap-3">
+                            <div>
+                                More time until <strong t-out="req.proposed_date" t-options='{"widget": "date"}'/>
+                            </div>
+                            <span t-attf-class="badge flex-shrink-0 #{request_badges[req.state][1]}" t-out="request_badges[req.state][0]"/>
+                        </div>
+                    </div>
+                </div>
+
+        </xpath>
+    </template>
+
+    <template id="tenant_pay_page" name="Tenant: send proof of payment">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="1"/>
+            <t t-set="additional_title">Send proof of payment</t>
+            <div class="container py-4 pm-portal">
+                <p><a href="/my/tenant">&#8592; My house</a></p>
+                <h1 class="h3 mb-1">Send proof of payment</h1>
+                <p class="text-muted mb-4">The office will check it against the bank or M-Pesa statement.</p>
+                <div t-if="error" class="alert alert-danger" role="alert"><t t-out="error"/></div>
+                <form method="post" action="/my/tenant/pay" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="mb-3">
+                        <label class="form-label">What are you paying for?</label>
+                        <select name="kind" class="form-select form-select-lg" required="required">
+                            <option value="rent" t-att-selected="post.get('kind', 'rent') == 'rent'">Rent</option>
+                            <option value="service_charge" t-att-selected="post.get('kind') == 'service_charge'">Service charge</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">How much did you pay?</label>
+                        <input type="text" name="amount" inputmode="decimal" class="form-control form-control-lg"
+                               t-att-value="post.get('amount', '')" placeholder="Example: 18000" required="required"/>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">How did you pay?</label>
+                        <select name="method" class="form-select form-select-lg">
+                            <option value="mpesa" t-att-selected="post.get('method', 'mpesa') == 'mpesa'">M-Pesa</option>
+                            <option value="bank" t-att-selected="post.get('method') == 'bank'">Bank</option>
+                            <option value="other" t-att-selected="post.get('method') == 'other'">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Paste the M-Pesa message</label>
+                        <textarea name="sms_text" rows="4" class="form-control"
+                                  placeholder="Example: SHL7K2M9QX Confirmed. Ksh18,000.00 sent to ..."><t t-out="post.get('sms_text', '')"/></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Or add a photo or PDF (optional, up to 3 files)</label>
+                        <input type="file" name="proof" multiple="multiple" accept="image/*,application/pdf" class="form-control"/>
+                    </div>
+                    <button type="submit" class="btn btn-lg w-100 pm-btn-primary">Send</button>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <template id="tenant_pay_done" name="Tenant: proof sent">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="1"/>
+            <t t-set="additional_title">Thank you</t>
+            <div class="container py-4 pm-portal">
+                <div class="alert alert-success" role="alert">
+                    Thank you. We have your proof of payment and will check it soon.
+                </div>
+                <a href="/my/tenant" class="btn btn-lg w-100 pm-btn-primary">Back to my house</a>
+            </div>
+        </t>
+    </template>
+
+    <template id="tenant_more_time_page" name="Tenant: ask for more time">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="1"/>
+            <t t-set="additional_title">Ask for more time</t>
+            <div class="container py-4 pm-portal">
+                <p><a href="/my/tenant">&#8592; My house</a></p>
+                <h1 class="h3 mb-1">Ask for more time</h1>
+                <p class="text-muted mb-4">Tell us the date you can pay by. The manager will reply.</p>
+                <div t-if="error" class="alert alert-danger" role="alert"><t t-out="error"/></div>
+                <div t-if="not invoices" class="alert alert-info" role="alert">
+                    You have no unpaid invoices that need a request right now.
+                </div>
+                <form t-if="invoices" method="post" action="/my/tenant/more-time">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="mb-3">
+                        <label class="form-label">Which invoice?</label>
+                        <select name="invoice_id" class="form-select form-select-lg" required="required">
+                            <option t-foreach="invoices" t-as="inv" t-att-value="inv.id" t-att-selected="str(inv.id) == post.get('invoice_id')">
+                                <t t-out="inv.name"/> - due <t t-out="inv.invoice_date_due" t-options='{"widget": "date"}'/>
+                            </option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">The date you can pay by</label>
+                        <input type="date" name="proposed_date" class="form-control form-control-lg"
+                               t-att-value="post.get('proposed_date', '')" required="required"/>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Why do you need more time?</label>
+                        <textarea name="reason" rows="3" class="form-control" required="required"><t t-out="post.get('reason', '')"/></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-lg w-100 pm-btn-primary">Send request</button>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <template id="tenant_more_time_done" name="Tenant: request sent">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="1"/>
+            <t t-set="additional_title">Request sent</t>
+            <div class="container py-4 pm-portal">
+                <div class="alert alert-success" role="alert">
+                    Your request was sent. The manager will decide soon, and you will see the answer on your home page.
+                </div>
+                <a href="/my/tenant" class="btn btn-lg w-100 pm-btn-primary">Back to my house</a>
+            </div>
+        </t>
+    </template>
+</odoo>
