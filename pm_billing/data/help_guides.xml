@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="pm_help_record_payment" model="pm.help.guide">
+        <field name="sequence">2</field>
+        <field name="name">Record a payment</field>
+        <field name="summary">Cash, M-Pesa or bank: three fields and a receipt.</field>
+        <field name="steps" type="html">
+<ol>
+    <li>Open <b>Payments</b> and then <b>Record a payment</b>.</li>
+    <li>Pick the <b>Invoice</b>. The amount still owed is filled in for you.</li>
+    <li>Type the <b>Amount received</b> and choose <b>How it was paid</b>.</li>
+    <li>For M-Pesa or bank, type the transaction code.</li>
+    <li>Press <b>Record payment and print receipt</b>. Give the receipt to the tenant.</li>
+</ol>
+<p>If a tenant sent proof from their phone, open <b>Payments to check</b> instead. Compare the message with the real statement, tick the box, and press the button.</p>
+        </field>
+    </record>
+
+    <record id="pm_help_meter_readings" model="pm.help.guide">
+        <field name="sequence">3</field>
+        <field name="name">Enter meter readings</field>
+        <field name="summary">Once a month, type the number on every meter.</field>
+        <field name="steps" type="html">
+<ol>
+    <li>Open <b>Water</b> and then <b>Enter meter readings</b>.</li>
+    <li>Pick the building and the day. Every unit's meter is listed with last month's number.</li>
+    <li>Type the number you see on each meter. Leave a unit empty if you could not read it.</li>
+    <li>A row is marked if the number looks odd. A number lower than last time cannot be saved: check it, or use <b>Replace meter</b> if the meter was changed.</li>
+    <li>Press <b>Save readings</b>. To guess the units you could not read, press <b>Save, and estimate the ones left empty</b>.</li>
+</ol>
+        </field>
+    </record>
+
+    <record id="pm_help_late_request" model="pm.help.guide">
+        <field name="sequence">4</field>
+        <field name="name">Approve a late-payment request</field>
+        <field name="summary">A tenant asks for more time. You decide.</field>
+        <field name="steps" type="html">
+<ol>
+    <li>Open <b>Payments</b> and then <b>Late-payment requests</b>.</li>
+    <li>Open the request. Read the reason and the date the tenant proposes.</li>
+    <li>Press <b>Approve</b> to move the invoice's due date, or <b>Decline</b> to change nothing.</li>
+    <li>The tenant sees the answer on their home page.</li>
+</ol>
+        </field>
+    </record>
+</odoo>

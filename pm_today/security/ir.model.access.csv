@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pm_setup_manager,pm.setup manager,pm_today.model_pm_setup,pm_property.group_pm_manager,1,1,1,0
+access_pm_setup_type_line_manager,pm.setup.type.line manager,pm_today.model_pm_setup_type_line,pm_property.group_pm_manager,1,1,1,1
+access_pm_setup_charge_line_manager,pm.setup.charge.line manager,pm_today.model_pm_setup_charge_line,pm_property.group_pm_manager,1,1,1,1
+access_pm_setup_provider_line_manager,pm.setup.provider.line manager,pm_today.model_pm_setup_provider_line,pm_property.group_pm_manager,1,1,1,1
+access_pm_setup_help_line_manager,pm.setup.help.line manager,pm_today.model_pm_setup_help_line,pm_property.group_pm_manager,1,1,1,1
+access_pm_today_manager,pm.today manager,pm_today.model_pm_today,pm_property.group_pm_manager,1,1,1,1
+access_pm_today_accountant,pm.today accountant,pm_today.model_pm_today,pm_property.group_pm_accountant,1,1,1,1
+access_pm_today_caretaker,pm.today caretaker,pm_today.model_pm_today,pm_property.group_pm_caretaker,1,1,1,1
+access_pm_today_owner,pm.today owner,pm_today.model_pm_today,pm_property.group_pm_owner,1,1,1,1

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_pm_today_root" name="Today" sequence="5"
+              groups="pm_property.group_pm_caretaker,pm_property.group_pm_accountant,pm_property.group_pm_manager,pm_property.group_pm_owner"
+              web_icon="pm_today,static/description/icon.png"/>
+    <menuitem id="menu_pm_today" name="Today" parent="menu_pm_today_root" action="pm_today_open_server_action" sequence="0"/>
+    <menuitem id="menu_pm_setup" name="Setup guide" parent="menu_pm_today_root"
+              action="pm_setup_open_server_action" sequence="60" groups="pm_property.group_pm_manager"/>
+</odoo>

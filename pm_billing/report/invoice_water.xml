@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Printed invoice: water lines leave the main table and get their own table with meter columns. -->
+    <template id="report_invoice_document_water" inherit_id="account.report_invoice_document">
+        <xpath expr="//t[@t-set='lines']" position="after">
+            <t t-set="lines" t-value="lines.filtered(lambda l: not l.pm_is_water)"/>
+        </xpath>
+        <xpath expr="//table[@name='invoice_line_table']" position="after">
+            <t t-set="pm_water_lines" t-value="o.invoice_line_ids.filtered(lambda l: l.pm_is_water).sorted(key=lambda l: (l.sequence, l.id))"/>
+            <div t-if="pm_water_lines" class="mt-4">
+                <h5>Water</h5>
+                <table class="table table-sm o_main_table table-borderless" name="pm_water_table">
+                    <thead>
+                        <tr>
+                            <th class="text-start">Meter</th>
+                            <th class="text-end">Previous</th>
+                            <th class="text-end">Now</th>
+                            <th class="text-end">Units</th>
+                            <th class="text-end">Rate</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="pm_water_lines" t-as="water">
+                            <td class="text-start">
+                                <span t-out="water.pm_meter_serial or water.name"/>
+                                <span t-if="water.pm_is_estimated"> (estimated)</span>
+                            </td>
+                            <td class="text-end"><span t-out="water.pm_prev_reading" t-options='{"widget": "float", "precision": 2}'/></td>
+                            <td class="text-end"><span t-out="water.pm_curr_reading" t-options='{"widget": "float", "precision": 2}'/></td>
+                            <td class="text-end"><span t-out="water.quantity" t-options='{"widget": "float", "precision": 2}'/></td>
+                            <td class="text-end"><span t-out="water.price_unit" t-options='{"widget": "float", "precision": 2}'/></td>
+                            <td class="text-end"><span t-out="water.price_subtotal" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="text-end"><strong>Water total</strong></td>
+                            <td class="text-end">
+                                <strong t-out="sum(pm_water_lines.mapped('price_subtotal'))" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </xpath>
+    </template>
+</odoo>

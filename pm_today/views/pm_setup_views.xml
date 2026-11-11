@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pm_setup_view_form" model="ir.ui.view">
+        <field name="name">pm.setup.form</field>
+        <field name="model">pm.setup</field>
+        <field name="arch" type="xml">
+            <form string="Setup guide" create="false" delete="false">
+                <header>
+                    <button name="action_back" type="object" string="Back"
+                            invisible="state != 'draft' or step == 'building'"/>
+                    <button name="action_skip" type="object" string="Skip this step"
+                            invisible="state != 'draft'"/>
+                    <button name="action_next" type="object" string="Next" class="btn-primary"
+                            invisible="state != 'draft' or step == 'tenant'"/>
+                    <button name="action_next" type="object" string="Finish" class="btn-primary"
+                            invisible="state != 'draft' or step != 'tenant'"/>
+                    <button name="action_open_buildings" type="object" string="Finish later"
+                            invisible="state != 'draft'"/>
+                    <button name="action_open_buildings" type="object" string="Open buildings"
+                            invisible="state != 'done'"/>
+                    <button name="action_start_new" type="object" string="Start new setup" class="btn-primary"
+                            invisible="state != 'done'"/>
+                    <button name="action_start_new" type="object" string="Start new"
+                            invisible="state != 'draft'"
+                            confirm="This throws away the setup you are in the middle of and starts a new one. Continue?"/>
+                    <field name="step" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <field name="state" invisible="1"/>
+                    <field name="building_id" invisible="1"/>
+
+                    <div class="alert alert-success" role="alert" invisible="state != 'done'">
+                        Setup is finished. Open Buildings to see what you created, or start a new setup for another building.
+                    </div>
+                    <div class="alert alert-secondary" role="alert" invisible="state != 'cancelled'">
+                        This setup was cancelled.
+                    </div>
+                    <group invisible="state != 'done' or not skipped_steps">
+                        <field name="skipped_steps"/>
+                    </group>
+
+                    <!-- 1 -->
+                    <group string="Step 1: Your building" invisible="state != 'draft' or step != 'building'">
+                        <field name="building_name" placeholder="e.g. Sunrise Apartments"/>
+                        <field name="building_address"/>
+                        <field name="owner_id"/>
+                    </group>
+
+                    <!-- 2 -->
+                    <div invisible="state != 'draft' or step != 'unit_types'">
+                        <h3 class="h5">Step 2: Unit types and prices</h3>
+                        <p class="text-muted">Add each kind of unit you rent out, with its monthly rent. Example: Bedsitter 8,000.</p>
+                        <field name="type_line_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="name"/>
+                                <field name="default_rent"/>
+                            </tree>
+                        </field>
+                    </div>
+
+                    <!-- 3 -->
+                    <div invisible="state != 'draft' or step != 'units'">
+                        <h3 class="h5">Step 3: Create your units</h3>
+                        <p class="text-muted">Make many units at once. Example: starts with A, from 1 to 24, on 4 floors gives A1 to A24.</p>
+                        <group>
+                            <field name="units_prefix"/>
+                            <field name="units_first"/>
+                            <field name="units_last"/>
+                            <field name="units_floors"/>
+                            <field name="units_type_id" options="{'no_create': True}"/>
+                        </group>
+                    </div>
+
+                    <!-- 4 -->
+                    <div invisible="state != 'draft' or step != 'water'">
+                        <h3 class="h5">Step 4: Water</h3>
+                        <p class="text-muted">This decides whether invoices get a water line.</p>
+                        <group><field name="water_choice" widget="radio"/></group>
+                    </div>
+
+                    <!-- 5 -->
+                    <div invisible="state != 'draft' or step != 'service'">
+                        <h3 class="h5">Step 5: Service charge items</h3>
+                        <p class="text-muted">The fixed monthly amounts each type of unit pays. Example: 2 bedroom, Security, 500.</p>
+                        <field name="charge_line_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="unit_type_id" options="{'no_create': True}"/>
+                                <field name="item"/>
+                                <field name="amount"/>
+                            </tree>
+                        </field>
+                    </div>
+
+                    <!-- 6 -->
+                    <div invisible="state != 'draft' or step != 'payment'">
+                        <h3 class="h5">Step 6: How tenants pay</h3>
+                        <p class="text-muted">Shown to tenants on their home page.</p>
+                        <field name="provider_line_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="type"/>
+                                <field name="name"/>
+                                <field name="details"/>
+                            </tree>
+                        </field>
+                    </div>
+
+                    <!-- 7 -->
+                    <div invisible="state != 'draft' or step != 'help'">
+                        <h3 class="h5">Step 7: Who tenants can call</h3>
+                        <p class="text-muted">Shown to tenants as "Who to call".</p>
+                        <field name="help_line_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="label"/>
+                                <field name="phone"/>
+                                <field name="hours"/>
+                                <field name="when_to_call"/>
+                            </tree>
+                        </field>
+                    </div>
+
+                    <!-- 8 -->
+                    <div invisible="state != 'draft' or step != 'tenant'">
+                        <h3 class="h5">Step 8: Your first tenant</h3>
+                        <p class="text-muted">Optional. This creates the tenant and starts their lease. Press Skip to do it later from Leases.</p>
+                        <group>
+                            <field name="tenant_name" placeholder="e.g. Amina Otieno"/>
+                            <field name="tenant_phone"/>
+                            <field name="tenant_unit_id" options="{'no_create': True}"/>
+                            <field name="tenant_start_date"/>
+                            <field name="tenant_lease_id" invisible="not tenant_lease_id"/>
+                        </group>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="pm_setup_open_server_action" model="ir.actions.server">
+        <field name="name">Setup guide</field>
+        <field name="model_id" ref="model_pm_setup"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open_setup()</field>
+    </record>
+</odoo>

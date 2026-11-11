@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="partner_default_owner" model="res.partner">
+        <field name="name">Default Owner</field>
+    </record>
+
+    <record id="pm_owner_default" model="pm.owner">
+        <field name="partner_id" ref="partner_default_owner"/>
+        <field name="is_default" eval="True"/>
+    </record>
+</odoo>

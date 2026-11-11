@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pm_building_view_form_maintenance" model="ir.ui.view">
+        <field name="name">pm.building.form.maintenance</field>
+        <field name="model">pm.building</field>
+        <field name="inherit_id" ref="pm_property.pm_building_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='pm_rules']" position="inside">
+                <field name="approval_threshold"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

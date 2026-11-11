@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_billing" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.billing</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Billing" string="Billing" name="pm_billing">
+                    <block title="Rent collection (used for new buildings)" name="pm_billing_rent">
+                        <setting string="Grace days" help="Existing buildings keep their own value.">
+                            <field name="pm_grace_days"/>
+                        </setting>
+                        <setting string="Invoice days before rent is due" help="Existing buildings keep their own value.">
+                            <field name="pm_invoice_lead_days"/>
+                        </setting>
+                        <setting string="First month rent" help="Existing buildings keep their own value.">
+                            <field name="pm_first_month"/>
+                        </setting>
+                    </block>
+                    <block title="M-Pesa STK Push" name="pm_billing_mpesa">
+                        <setting string="Pay with M-Pesa STK Push"
+                                 help="On: the tenant presses Pay now on the invoice, enters the M-Pesa PIN on their phone, and the payment and receipt are made automatically. Off: tenants see the manual payment details and send proof for staff to approve.">
+                            <field name="pm_mpesa_enabled"/>
+                        </setting>
+                        <setting string="Daraja API details" help="Copy these from your app on the Safaricom Daraja portal.">
+                            <div class="content-group">
+                                <div class="row mt8"><label class="col-lg-4" for="pm_mpesa_env"/><field name="pm_mpesa_env"/></div>
+                                <div class="row mt8"><label class="col-lg-4" for="pm_mpesa_consumer_key"/><field name="pm_mpesa_consumer_key" password="True"/></div>
+                                <div class="row mt8"><label class="col-lg-4" for="pm_mpesa_consumer_secret"/><field name="pm_mpesa_consumer_secret" password="True"/></div>
+                                <div class="row mt8"><label class="col-lg-4" for="pm_mpesa_shortcode"/><field name="pm_mpesa_shortcode"/></div>
+                                <div class="row mt8"><label class="col-lg-4" for="pm_mpesa_passkey"/><field name="pm_mpesa_passkey" password="True"/></div>
+                                <div class="row mt8"><label class="col-lg-4" for="pm_mpesa_txn_type"/><field name="pm_mpesa_txn_type"/></div>
+                                <div class="row mt8" invisible="pm_mpesa_txn_type != 'CustomerBuyGoodsOnline'"><label class="col-lg-4" for="pm_mpesa_till"/><field name="pm_mpesa_till"/></div>
+                                <div class="mt8">
+                                    <button name="action_pm_mpesa_test" type="object" class="btn btn-secondary" string="Test connection"/>
+                                </div>
+                                <div class="row mt16"><label class="col-lg-4" for="pm_mpesa_test_phone"/><field name="pm_mpesa_test_phone" placeholder="0712345678"/></div>
+                                <div class="mt8">
+                                    <button name="action_pm_mpesa_test_push" type="object" class="btn btn-secondary" string="Send test prompt (KES 1)"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Where Safaricom sends the result"
+                                 help="Edit it directly. It has to start with https and Safaricom must be able to reach it from the internet.">
+                            <div class="content-group">
+                                <div class="row mt8"><label class="col-lg-4" for="pm_mpesa_callback_url"/><field name="pm_mpesa_callback_url" placeholder="https://rent.example.com/pm_billing/stk/callback/your-secret"/></div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Water (used for new buildings)" name="pm_billing_water">
+                        <setting string="Water leak warning (%)" help="Existing buildings keep their own value.">
+                            <field name="pm_leak_threshold_pct"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

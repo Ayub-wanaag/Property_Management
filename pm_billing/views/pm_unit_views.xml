@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pm_unit_view_form_billing" model="ir.ui.view">
+        <field name="name">pm.unit.form.billing</field>
+        <field name="model">pm.unit</field>
+        <field name="inherit_id" ref="pm_property.pm_unit_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='building_id']" position="after">
+                <field name="water_category_id" options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

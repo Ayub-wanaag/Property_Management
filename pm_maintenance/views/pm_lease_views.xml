@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pm_lease_view_form_maintenance" model="ir.ui.view">
+        <field name="name">pm.lease.form.maintenance</field>
+        <field name="model">pm.lease</field>
+        <field name="inherit_id" ref="pm_property.pm_lease_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_open_inspections']" position="after">
+                        <button name="action_open_tickets" type="object" class="oe_stat_button" icon="fa-wrench">
+                            <field name="ticket_count" widget="statinfo" string="Problems"/>
+                        </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_pm_billing_root" name="Billing" sequence="20"
+              groups="pm_property.group_pm_caretaker,pm_property.group_pm_accountant,pm_property.group_pm_manager"
+              web_icon="pm_billing,static/description/icon.png"/>
+    <menuitem id="menu_pm_collection" name="Rent collection" parent="menu_pm_billing_root" sequence="35"
+              groups="pm_property.group_pm_caretaker,pm_property.group_pm_accountant,pm_property.group_pm_manager"/>
+    <menuitem id="menu_pm_chase_list" name="Chase list" parent="menu_pm_collection" action="pm_chase_list_action"
+              sequence="1" groups="pm_property.group_pm_caretaker"/>
+    <menuitem id="menu_pm_chase_log" name="Contact log" parent="menu_pm_collection" action="pm_chase_log_action"
+              sequence="3" groups="pm_property.group_pm_caretaker,pm_property.group_pm_accountant"/>
+    <menuitem id="menu_pm_payments" name="Payments" parent="menu_pm_billing_root" sequence="36"
+              groups="pm_property.group_pm_accountant"/>
+    <menuitem id="menu_pm_claims_to_check" name="Payments to check" parent="menu_pm_payments"
+              action="pm_payment_claim_to_check_action" sequence="1"/>
+    <menuitem id="menu_pm_record_payment" name="Record a payment" parent="menu_pm_payments"
+              action="pm_payment_wizard_action" sequence="2"/>
+    <menuitem id="menu_pm_claims_all" name="All payment proof" parent="menu_pm_payments"
+              action="pm_payment_claim_all_action" sequence="3"/>
+    <menuitem id="menu_pm_receipts" name="Receipts" parent="menu_pm_payments"
+              action="pm_receipt_action" sequence="4"/>
+    <menuitem id="menu_pm_mpesa_transactions" name="M-Pesa STK payments" parent="menu_pm_payments"
+              action="pm_mpesa_transaction_action" sequence="7"/>
+    <menuitem id="menu_pm_late_requests" name="Late-payment requests" parent="menu_pm_payments"
+              action="pm_late_request_action" sequence="5" groups="pm_property.group_pm_manager"/>
+    <menuitem id="menu_pm_service_invoices" name="Create service charge invoices" parent="menu_pm_payments"
+              action="pm_service_invoice_wizard_action" sequence="6"/>
+    <menuitem id="menu_pm_water" name="Water" parent="menu_pm_billing_root" sequence="37"
+              groups="pm_property.group_pm_caretaker,pm_property.group_pm_accountant,pm_property.group_pm_manager"/>
+    <menuitem id="menu_pm_enter_readings" name="Enter meter readings" parent="menu_pm_water"
+              action="pm_reading_sheet_action" sequence="1" groups="pm_property.group_pm_caretaker"/>
+    <menuitem id="menu_pm_readings" name="Readings" parent="menu_pm_water"
+              action="pm_meter_reading_action" sequence="2"/>
+    <menuitem id="menu_pm_meters" name="Meters" parent="menu_pm_water"
+              action="pm_meter_action" sequence="3"/>
+    <menuitem id="menu_pm_water_costs" name="Water costs" parent="menu_pm_water"
+              action="pm_water_cycle_action" sequence="4" groups="pm_property.group_pm_accountant"/>
+    <menuitem id="menu_pm_water_categories" name="Water categories" parent="menu_pm_water"
+              action="pm_water_category_action" sequence="5" groups="pm_property.group_pm_manager"/>
+    <!-- Reports: the arrears report sits here, aged like a partner ledger -->
+    <menuitem id="menu_pm_reports" name="Reports" parent="menu_pm_billing_root" sequence="90"
+              groups="pm_property.group_pm_accountant,pm_property.group_pm_manager"/>
+    <menuitem id="menu_pm_arrears" name="Arrears (aging)" parent="menu_pm_reports" action="pm_arrears_action"
+              sequence="1" groups="pm_property.group_pm_accountant"/>
+    <menuitem id="menu_pm_billing_settings" name="Settings" parent="menu_pm_billing_root" action="pm_billing_settings_action"
+              sequence="99" groups="base.group_system"/>
+</odoo>

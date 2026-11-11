@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_pm_maintenance_root" name="Maintenance" sequence="30"
+              groups="pm_property.group_pm_caretaker,pm_property.group_pm_accountant,pm_property.group_pm_manager"
+              web_icon="pm_maintenance,static/description/icon.png"/>
+    <menuitem id="menu_pm_problems" name="Problems" parent="menu_pm_maintenance_root" action="pm_ticket_action" sequence="33"
+              groups="pm_property.group_pm_caretaker,pm_property.group_pm_manager"/>
+    <menuitem id="menu_pm_agents" name="Agents" parent="menu_pm_maintenance_root" action="pm_agent_action" sequence="42"
+              groups="pm_property.group_pm_caretaker,pm_property.group_pm_accountant,pm_property.group_pm_manager"/>
+</odoo>

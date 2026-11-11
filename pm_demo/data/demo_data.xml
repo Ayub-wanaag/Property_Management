@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pm_property.pm_owner_default" model="pm.owner">
+        <field name="commission_rate">10</field>
+    </record>
+
+    <record id="pm_building_sunrise" model="pm.building">
+        <field name="name">Sunrise Apartments</field>
+        <field name="address">Nairobi (sample data)</field>
+        <field name="owner_id" ref="pm_property.pm_owner_default"/>
+        <field name="uses_ncwsc" eval="True"/>
+        <field name="uses_borehole" eval="True"/>
+        <field name="grace_days">5</field>
+        <field name="leak_threshold_pct">10</field>
+        <field name="payment_instructions">M-Pesa Paybill 123456, account number is your house number (sample data)</field>
+    </record>
+
+    <record id="pm_type_bedsitter" model="pm.unit.type">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="name">Bedsitter</field>
+        <field name="default_rent">8000</field>
+    </record>
+
+    <record id="pm_type_1br" model="pm.unit.type">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="name">1 bedroom</field>
+        <field name="default_rent">12000</field>
+    </record>
+
+    <record id="pm_type_2br" model="pm.unit.type">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="name">2 bedroom</field>
+        <field name="default_rent">18000</field>
+    </record>
+
+    <record id="pm_type_3br" model="pm.unit.type">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="name">3 bedroom</field>
+        <field name="default_rent">25000</field>
+    </record>
+
+    <record id="pm_unit_a1" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A1</field>
+        <field name="floor">1</field>
+        <field name="unit_type_id" ref="pm_type_bedsitter"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a2" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A2</field>
+        <field name="floor">1</field>
+        <field name="unit_type_id" ref="pm_type_1br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a3" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A3</field>
+        <field name="floor">1</field>
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="status">vacant</field>
+    </record>
+
+    <record id="pm_unit_a4" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A4</field>
+        <field name="floor">1</field>
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a5" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A5</field>
+        <field name="floor">1</field>
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a6" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A6</field>
+        <field name="floor">1</field>
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="status">notice_given</field>
+    </record>
+
+    <record id="pm_unit_a7" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A7</field>
+        <field name="floor">2</field>
+        <field name="unit_type_id" ref="pm_type_bedsitter"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a8" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A8</field>
+        <field name="floor">2</field>
+        <field name="unit_type_id" ref="pm_type_1br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a9" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A9</field>
+        <field name="floor">2</field>
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="status">vacant</field>
+    </record>
+
+    <record id="pm_unit_a10" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A10</field>
+        <field name="floor">2</field>
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a11" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A11</field>
+        <field name="floor">2</field>
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="status">renovation</field>
+    </record>
+
+    <record id="pm_unit_a12" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A12</field>
+        <field name="floor">2</field>
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a13" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A13</field>
+        <field name="floor">3</field>
+        <field name="unit_type_id" ref="pm_type_bedsitter"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a14" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A14</field>
+        <field name="floor">3</field>
+        <field name="unit_type_id" ref="pm_type_1br"/>
+        <field name="status">vacant</field>
+    </record>
+
+    <record id="pm_unit_a15" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A15</field>
+        <field name="floor">3</field>
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a16" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A16</field>
+        <field name="floor">3</field>
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a17" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A17</field>
+        <field name="floor">3</field>
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="status">notice_given</field>
+    </record>
+
+    <record id="pm_unit_a18" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A18</field>
+        <field name="floor">3</field>
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a19" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A19</field>
+        <field name="floor">4</field>
+        <field name="unit_type_id" ref="pm_type_bedsitter"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a20" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A20</field>
+        <field name="floor">4</field>
+        <field name="unit_type_id" ref="pm_type_1br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a21" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A21</field>
+        <field name="floor">4</field>
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="status">vacant</field>
+    </record>
+
+    <record id="pm_unit_a22" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A22</field>
+        <field name="floor">4</field>
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a23" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A23</field>
+        <field name="floor">4</field>
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_unit_a24" model="pm.unit">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="number">A24</field>
+        <field name="floor">4</field>
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="status">occupied</field>
+    </record>
+
+    <record id="pm_tenant_a1" model="res.partner">
+        <field name="name">Faith Njeri</field>
+    </record>
+
+    <record id="pm_lease_a1" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a1"/>
+        <field name="tenant_id" ref="pm_tenant_a1"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a2" model="res.partner">
+        <field name="name">David Kimani</field>
+    </record>
+
+    <record id="pm_lease_a2" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a2"/>
+        <field name="tenant_id" ref="pm_tenant_a2"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a4" model="res.partner">
+        <field name="name">Esther Achieng</field>
+    </record>
+
+    <record id="pm_lease_a4" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a4"/>
+        <field name="tenant_id" ref="pm_tenant_a4"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a5" model="res.partner">
+        <field name="name">Grace Wanjiru</field>
+    </record>
+
+    <record id="pm_lease_a5" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a5"/>
+        <field name="tenant_id" ref="pm_tenant_a5"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a6" model="res.partner">
+        <field name="name">Samuel Mutua</field>
+    </record>
+
+    <record id="pm_lease_a6" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a6"/>
+        <field name="tenant_id" ref="pm_tenant_a6"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">notice</field>
+    </record>
+
+    <record id="pm_tenant_a7" model="res.partner">
+        <field name="name">Lucy Wambui</field>
+    </record>
+
+    <record id="pm_lease_a7" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a7"/>
+        <field name="tenant_id" ref="pm_tenant_a7"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a8" model="res.partner">
+        <field name="name">John Mwangi</field>
+    </record>
+
+    <record id="pm_lease_a8" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a8"/>
+        <field name="tenant_id" ref="pm_tenant_a8"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a10" model="res.partner">
+        <field name="name">Hassan Abdi</field>
+    </record>
+
+    <record id="pm_lease_a10" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a10"/>
+        <field name="tenant_id" ref="pm_tenant_a10"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a12" model="res.partner">
+        <field name="name">Amina Otieno</field>
+    </record>
+
+    <record id="pm_lease_a12" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a12"/>
+        <field name="tenant_id" ref="pm_tenant_a12"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a13" model="res.partner">
+        <field name="name">Mercy Chebet</field>
+    </record>
+
+    <record id="pm_lease_a13" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a13"/>
+        <field name="tenant_id" ref="pm_tenant_a13"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a15" model="res.partner">
+        <field name="name">Kevin Omondi</field>
+    </record>
+
+    <record id="pm_lease_a15" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a15"/>
+        <field name="tenant_id" ref="pm_tenant_a15"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a16" model="res.partner">
+        <field name="name">Peter Kamau</field>
+    </record>
+
+    <record id="pm_lease_a16" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a16"/>
+        <field name="tenant_id" ref="pm_tenant_a16"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a17" model="res.partner">
+        <field name="name">Joyce Naliaka</field>
+    </record>
+
+    <record id="pm_lease_a17" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a17"/>
+        <field name="tenant_id" ref="pm_tenant_a17"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">notice</field>
+    </record>
+
+    <record id="pm_tenant_a18" model="res.partner">
+        <field name="name">Daniel Kiprop</field>
+    </record>
+
+    <record id="pm_lease_a18" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a18"/>
+        <field name="tenant_id" ref="pm_tenant_a18"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a19" model="res.partner">
+        <field name="name">Rose Akinyi</field>
+    </record>
+
+    <record id="pm_lease_a19" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a19"/>
+        <field name="tenant_id" ref="pm_tenant_a19"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a20" model="res.partner">
+        <field name="name">Moses Njoroge</field>
+    </record>
+
+    <record id="pm_lease_a20" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a20"/>
+        <field name="tenant_id" ref="pm_tenant_a20"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a22" model="res.partner">
+        <field name="name">Fatuma Hussein</field>
+    </record>
+
+    <record id="pm_lease_a22" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a22"/>
+        <field name="tenant_id" ref="pm_tenant_a22"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a23" model="res.partner">
+        <field name="name">Joseph Karanja</field>
+    </record>
+
+    <record id="pm_lease_a23" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a23"/>
+        <field name="tenant_id" ref="pm_tenant_a23"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_tenant_a24" model="res.partner">
+        <field name="name">Beatrice Wafula</field>
+    </record>
+
+    <record id="pm_lease_a24" model="pm.lease">
+        <field name="unit_id" ref="pm_unit_a24"/>
+        <field name="tenant_id" ref="pm_tenant_a24"/>
+        <field name="start_date">2026-01-01</field>
+        <field name="end_date">2026-12-31</field>
+        <field name="rent_due_day">1</field>
+        <field name="state">active</field>
+    </record>
+
+    <record id="pm_provider_paybill" model="pm.payment.provider">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="type">mpesa_paybill</field>
+        <field name="name">M-Pesa Paybill</field>
+        <field name="details">Paybill 123456&#10;Account number: your house number (sample data)</field>
+    </record>
+
+    <record id="pm_provider_bank" model="pm.payment.provider">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="type">bank</field>
+        <field name="name">Bank transfer</field>
+        <field name="details">Sample Bank, account 0123456789, name Sunrise Apartments (sample data)</field>
+    </record>
+
+    <record id="pm_help_caretaker" model="pm.help.contact">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="label">Caretaker</field>
+        <field name="phone">0700 000 001</field>
+        <field name="hours">8am to 6pm, every day</field>
+        <field name="when_to_call">Water, power or door problems (sample data)</field>
+    </record>
+
+    <record id="pm_help_emergency" model="pm.help.contact">
+        <field name="building_id" ref="pm_building_sunrise"/>
+        <field name="label">Emergency, after hours</field>
+        <field name="phone">0700 000 002</field>
+        <field name="hours">6pm to 8am</field>
+        <field name="when_to_call">Fire, flooding or a break-in (sample data)</field>
+    </record>
+
+
+    <!-- Fixed service charge items per unit type. Each type adds up to its total: 2,500 / 3,000 / 3,500 / 4,000. -->
+    <record id="pm_product_security" model="product.product">
+        <field name="name">Security</field>
+        <field name="detailed_type">service</field>
+        <field name="list_price">0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+    <record id="pm_product_cleaning" model="product.product">
+        <field name="name">Cleaning</field>
+        <field name="detailed_type">service</field>
+        <field name="list_price">0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+    <record id="pm_product_garbage" model="product.product">
+        <field name="name">Garbage collection</field>
+        <field name="detailed_type">service</field>
+        <field name="list_price">0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+    <record id="pm_product_lighting" model="product.product">
+        <field name="name">Common area lighting</field>
+        <field name="detailed_type">service</field>
+        <field name="list_price">0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+    <record id="pm_product_mgmt" model="product.product">
+        <field name="name">Management staff</field>
+        <field name="detailed_type">service</field>
+        <field name="list_price">0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+    <record id="pm_charge_bedsitter_security" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_bedsitter"/>
+        <field name="product_id" ref="pm_product_security"/>
+        <field name="amount">1000</field>
+    </record>
+    <record id="pm_charge_bedsitter_cleaning" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_bedsitter"/>
+        <field name="product_id" ref="pm_product_cleaning"/>
+        <field name="amount">500</field>
+    </record>
+    <record id="pm_charge_bedsitter_garbage" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_bedsitter"/>
+        <field name="product_id" ref="pm_product_garbage"/>
+        <field name="amount">300</field>
+    </record>
+    <record id="pm_charge_bedsitter_lighting" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_bedsitter"/>
+        <field name="product_id" ref="pm_product_lighting"/>
+        <field name="amount">300</field>
+    </record>
+    <record id="pm_charge_bedsitter_mgmt" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_bedsitter"/>
+        <field name="product_id" ref="pm_product_mgmt"/>
+        <field name="amount">400</field>
+    </record>
+    <record id="pm_charge_1br_security" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_1br"/>
+        <field name="product_id" ref="pm_product_security"/>
+        <field name="amount">1200</field>
+    </record>
+    <record id="pm_charge_1br_cleaning" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_1br"/>
+        <field name="product_id" ref="pm_product_cleaning"/>
+        <field name="amount">600</field>
+    </record>
+    <record id="pm_charge_1br_garbage" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_1br"/>
+        <field name="product_id" ref="pm_product_garbage"/>
+        <field name="amount">400</field>
+    </record>
+    <record id="pm_charge_1br_lighting" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_1br"/>
+        <field name="product_id" ref="pm_product_lighting"/>
+        <field name="amount">350</field>
+    </record>
+    <record id="pm_charge_1br_mgmt" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_1br"/>
+        <field name="product_id" ref="pm_product_mgmt"/>
+        <field name="amount">450</field>
+    </record>
+    <record id="pm_charge_2br_security" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="product_id" ref="pm_product_security"/>
+        <field name="amount">1400</field>
+    </record>
+    <record id="pm_charge_2br_cleaning" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="product_id" ref="pm_product_cleaning"/>
+        <field name="amount">700</field>
+    </record>
+    <record id="pm_charge_2br_garbage" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="product_id" ref="pm_product_garbage"/>
+        <field name="amount">450</field>
+    </record>
+    <record id="pm_charge_2br_lighting" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="product_id" ref="pm_product_lighting"/>
+        <field name="amount">350</field>
+    </record>
+    <record id="pm_charge_2br_mgmt" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_2br"/>
+        <field name="product_id" ref="pm_product_mgmt"/>
+        <field name="amount">600</field>
+    </record>
+    <record id="pm_charge_3br_security" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="product_id" ref="pm_product_security"/>
+        <field name="amount">1600</field>
+    </record>
+    <record id="pm_charge_3br_cleaning" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="product_id" ref="pm_product_cleaning"/>
+        <field name="amount">800</field>
+    </record>
+    <record id="pm_charge_3br_garbage" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="product_id" ref="pm_product_garbage"/>
+        <field name="amount">500</field>
+    </record>
+    <record id="pm_charge_3br_lighting" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="product_id" ref="pm_product_lighting"/>
+        <field name="amount">400</field>
+    </record>
+    <record id="pm_charge_3br_mgmt" model="pm.unit.type.charge">
+        <field name="unit_type_id" ref="pm_type_3br"/>
+        <field name="product_id" ref="pm_product_mgmt"/>
+        <field name="amount">700</field>
+    </record>
+
+    <function model="pm.demo" name="create_invoices"/>
+    <function model="pm.demo" name="create_water_demo"/>
+    <function model="pm.demo" name="create_phase2_demo"/>
+</odoo>
