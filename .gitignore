@@ -4,3 +4,6 @@ __pycache__/
 .env
 filestore/
 *.zip
+agents/
+modules/
+property_management/
