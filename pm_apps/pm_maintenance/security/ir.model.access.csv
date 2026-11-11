@@ -1,6 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_pm_ticket_manager,pm.ticket manager,pm_maintenance.model_pm_ticket,pm_property.group_pm_manager,1,1,1,0
-access_pm_ticket_caretaker,pm.ticket caretaker,pm_maintenance.model_pm_ticket,pm_property.group_pm_caretaker,1,1,0,0
-access_pm_agent_manager,pm.agent manager,pm_maintenance.model_pm_agent,pm_property.group_pm_manager,1,1,1,0
-access_pm_agent_accountant,pm.agent accountant,pm_maintenance.model_pm_agent,pm_property.group_pm_accountant,1,0,0,0
-access_pm_agent_caretaker,pm.agent caretaker,pm_maintenance.model_pm_agent,pm_property.group_pm_caretaker,1,0,0,0
