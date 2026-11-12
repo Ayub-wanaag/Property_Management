@@ -18,4 +18,5 @@ from . import pm_water_cycle
 from . import pm_generator
 from . import pm_service_invoice_wizard
 from . import pm_deposit_billing
+from . import pm_mpesa_test_wizard
 from . import res_config_settings

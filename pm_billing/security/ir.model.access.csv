@@ -43,3 +43,4 @@ access_pm_water_category_tier_accountant,pm.water.category.tier accountant,pm_bi
 access_pm_water_category_tier_caretaker,pm.water.category.tier caretaker,pm_billing.model_pm_water_category_tier,pm_property.group_pm_caretaker,1,0,0,0
 access_pm_mpesa_transaction_manager,pm.mpesa.transaction manager,pm_billing.model_pm_mpesa_transaction,pm_property.group_pm_manager,1,0,0,0
 access_pm_mpesa_transaction_accountant,pm.mpesa.transaction accountant,pm_billing.model_pm_mpesa_transaction,pm_property.group_pm_accountant,1,0,0,0
+access_pm_mpesa_test_wizard_admin,pm.mpesa.test.wizard admin,pm_billing.model_pm_mpesa_test_wizard,base.group_system,1,1,1,1

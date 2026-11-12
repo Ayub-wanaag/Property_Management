@@ -112,15 +112,6 @@ class TestMpesa(AccountTestInvoicingCommon):
         with self.assertRaises(ValidationError):
             self.env["res.config.settings"].create({"pm_mpesa_enabled": True})
 
-    def test_connection_test(self):
-        settings = self.env["res.config.settings"].create(
-            {"pm_mpesa_consumer_key": "k", "pm_mpesa_consumer_secret": "s", "pm_mpesa_shortcode": "174379", "pm_mpesa_passkey": "p"}
-        )
-        with patch(MODULE + ".get", return_value=_reply({"access_token": "tok"})):
-            self.assertEqual(settings.action_pm_mpesa_test()["tag"], "display_notification")
-        with patch(MODULE + ".get", return_value=_reply({}, status=400)), self.assertRaises(UserError):
-            settings.action_pm_mpesa_test()
-
     # ----- sending the prompt -----
     def test_push_is_sent_with_the_right_amount_and_phone(self):
         self._turn_on()
@@ -193,16 +184,19 @@ class TestMpesa(AccountTestInvoicingCommon):
             self.env["res.config.settings"].create({"pm_mpesa_callback_url": "http://rent.example.com/pm_billing/stk/callback/abc"})
 
     def test_test_prompt_goes_to_the_typed_number(self):
-        settings = self.env["res.config.settings"].create(
-            {"pm_mpesa_consumer_key": "k", "pm_mpesa_consumer_secret": "s", "pm_mpesa_shortcode": "174379",
-             "pm_mpesa_passkey": "p", "pm_mpesa_test_phone": "0712345678"}
-        )
+        params = self.env["ir.config_parameter"].sudo()
+        for key, value in (("consumer_key", "k"), ("consumer_secret", "s"), ("shortcode", "174379"), ("passkey", "p")):
+            params.set_param("pm_billing.mpesa_" + key, value)
+        wizard = self.env["pm.mpesa.test.wizard"].create({"phone": "0712345678"})
         with patch(MODULE + ".get", return_value=_reply({"access_token": "tok"})), patch(
             MODULE + ".post", return_value=_reply({"ResponseCode": "0", "CustomerMessage": "ok"})
         ) as post:
-            settings.action_pm_mpesa_test_push()
+            result = wizard.action_send()
         payload = post.call_args.kwargs["json"]
         self.assertEqual((payload["Amount"], payload["PhoneNumber"]), (1, "254712345678"))
-        settings.pm_mpesa_test_phone = "123"
+        self.assertEqual(result["tag"], "display_notification")
+        self.assertEqual(result["params"]["next"], {"type": "ir.actions.act_window_close"})
+        self.assertFalse(params.get_param("pm_billing.mpesa_test_phone"))  # the number is never saved
+        wizard.phone = "123"
         with self.assertRaises(UserError):
-            settings.action_pm_mpesa_test_push()
+            wizard.action_send()

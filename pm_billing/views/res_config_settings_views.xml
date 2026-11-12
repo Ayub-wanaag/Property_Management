@@ -33,11 +33,7 @@
                                 <div class="row mt8"><label class="col-lg-4" for="pm_mpesa_txn_type"/><field name="pm_mpesa_txn_type"/></div>
                                 <div class="row mt8" invisible="pm_mpesa_txn_type != 'CustomerBuyGoodsOnline'"><label class="col-lg-4" for="pm_mpesa_till"/><field name="pm_mpesa_till"/></div>
                                 <div class="mt8">
-                                    <button name="action_pm_mpesa_test" type="object" class="btn btn-secondary" string="Test connection"/>
-                                </div>
-                                <div class="row mt16"><label class="col-lg-4" for="pm_mpesa_test_phone"/><field name="pm_mpesa_test_phone" placeholder="0712345678"/></div>
-                                <div class="mt8">
-                                    <button name="action_pm_mpesa_test_push" type="object" class="btn btn-secondary" string="Send test prompt (KES 1)"/>
+                                    <button name="%(pm_billing.pm_mpesa_test_wizard_action)d" type="action" class="btn btn-secondary" string="Send a test prompt (KES 1)"/>
                                 </div>
                             </div>
                         </setting>

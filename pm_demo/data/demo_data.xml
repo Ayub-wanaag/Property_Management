@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<odoo noupdate="1">
     <record id="pm_property.pm_owner_default" model="pm.owner">
         <field name="commission_rate">10</field>
     </record>

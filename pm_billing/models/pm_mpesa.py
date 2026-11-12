@@ -157,12 +157,6 @@ class PmMpesaApi(models.AbstractModel):
         return base64.b64encode(raw).decode(), timestamp
 
     @api.model
-    def test_connection(self, creds):
-        """Asks Safaricom for an access token. If that works, the key, secret and environment are right."""
-        self._token(creds)
-        return True
-
-    @api.model
     def stk_push(self, creds, phone, amount, reference, description, callback_url=None):
         password, timestamp = self._password(creds)
         payload = {
