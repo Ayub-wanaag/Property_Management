@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Header: the "Contact us" button becomes two portal buttons.
+         The original link keeps its class, because Odoo's other header styles look for it. -->
+    <template id="pm_header_buttons" inherit_id="website.header_call_to_action" name="Property Management header buttons">
+        <xpath expr="//a[hasclass('btn_cta')]" position="replace">
+            <a t-if="request.env.user._is_public() or request.env.user._is_internal()" href="/web/login" class="btn btn-outline-primary me-2">Staff portal</a>
+            <a href="/tenant/login" class="oe_unremovable btn btn-primary btn_cta">Tenant portal</a>
+        </xpath>
+    </template>
+
+    <!-- The two portal buttons replace Odoo's plain "Sign in" link -->
+    <template id="pm_hide_sign_in" inherit_id="portal.user_sign_in" name="Hide the default Sign in link">
+        <xpath expr="//li" position="attributes">
+            <attribute name="t-attf-class">d-none #{_item_class} o_no_autohide_item</attribute>
+        </xpath>
+    </template>
+
+    <!-- Footer: a simple line and the two portals, instead of the default placeholder text -->
+    <template id="pm_footer" inherit_id="website.layout" name="Property Management footer" priority="99">
+        <xpath expr="//div[@id='footer']" position="replace">
+            <div id="footer" class="oe_structure oe_structure_solo" t-ignore="true" t-if="not no_footer">
+                <section class="s_text_block pt32 pb32">
+                    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+                        <span class="text-muted">Apartment management made simple.</span>
+                        <span class="d-flex gap-4">
+                            <a href="/web/login">Staff portal</a>
+                            <a href="/tenant/login">Tenant portal</a>
+                        </span>
+                    </div>
+                </section>
+            </div>
+        </xpath>
+    </template>
+</odoo>

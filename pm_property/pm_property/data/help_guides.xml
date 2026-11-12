@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="pm_help_move_in" model="pm.help.guide">
+        <field name="sequence">1</field>
+        <field name="name">Move in a tenant</field>
+        <field name="summary">Put a new tenant in a unit, give them a login, and photograph the rooms.</field>
+        <field name="steps" type="html">
+<ol>
+    <li>Open <b>Leases</b> and click <b>New</b>.</li>
+    <li>Pick the <b>Unit</b> and the <b>Tenant</b>. If the tenant is new, type their name and press Create.</li>
+    <li>Check the start date, the monthly rent and the <b>Deposit</b>. The deposit is the money you hold for the tenant.</li>
+    <li>Press <b>Start lease</b>. The unit becomes occupied, the deposit is noted, and a move-in photo list is opened.</li>
+    <li>Press <b>Create tenant login</b>. Keep the password the system suggests, or type your own, then press <b>Create login</b>.</li>
+    <li>Press <b>Print welcome sheet</b> and give it to the tenant. The password is shown only once.</li>
+    <li>Open <b>Moving in and out, then Inspections</b>. Add one photo of every room, then press <b>Finish inspection</b>. These photos are the starting point for the move-out check.</li>
+    <li>When the tenant hands over the deposit, open <b>Moving in and out, then Deposits</b> and press <b>Money received</b>.</li>
+</ol>
+        </field>
+    </record>
+
+    <record id="pm_help_move_out" model="pm.help.guide">
+        <field name="sequence">5</field>
+        <field name="name">Move out a tenant</field>
+        <field name="summary">From the request to the deposit refund.</field>
+        <field name="steps" type="html">
+<ol>
+    <li>When a tenant asks to move out, it appears in <b>Moving in and out, then Move-outs</b>. Open it and press <b>Acknowledge</b>.</li>
+    <li>The tenant uploads a photo of every room from their phone.</li>
+    <li>Open the request and look at <b>Compare the photos</b>: move-in on the left, move-out on the right. Press <b>Photos reviewed</b>.</li>
+    <li>Press <b>Open the deposit</b>. Press <b>Take off unpaid invoices</b> and <b>Add final water bill</b>. Add a line for any damage, with a photo. Then press <b>Prepare the refund</b>. The tenant can now see the deductions in their portal.</li>
+    <li>Back on the move-out, press <b>Complete the move-out</b>. The lease ends, the unit becomes vacant and the tenant's login is turned off. If the tenant disputed a deduction, decide on it first.</li>
+    <li>Pay the tenant. Then open the deposit and press <b>Mark as refunded</b>. Refund within the number of days set on the building.</li>
+</ol>
+<p>If the tenant disagrees with a deduction, they must write why. It appears in <b>Deposit disputes</b>.</p>
+        </field>
+    </record>
+</odoo>
