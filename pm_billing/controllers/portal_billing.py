@@ -50,7 +50,7 @@ class TenantPortalBilling(TenantPortal):
         values.update(
             {
                 "mpesa_enabled": mpesa_enabled,
-                "mpesa_pay_url": unpaid.get_portal_url() if mpesa_enabled and len(unpaid) == 1 else "/my/invoices",
+                "unpaid_invoices": unpaid if mpesa_enabled else unpaid.browse(),
                 "generator_product": generator_product,
                 "generator": subscriptions.search([("lease_id", "=", lease.id)], limit=1) if generator_product else subscriptions,
                 "gen_message": kw.get("gen"),

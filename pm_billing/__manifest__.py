@@ -5,7 +5,7 @@
     "summary": "Rent collection, payments and receipts, water meters and bills, service charge and the generator plan.",
     "author": "Ayub",
     "license": "LGPL-3",
-    "depends": ["pm_property"],
+    "depends": ["pm_property", "account_payment"],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",

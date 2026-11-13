@@ -50,6 +50,10 @@ class TestMpesa(AccountTestInvoicingCommon):
         cls.today = cls.env.cr.fetchone()[0]
         cls.Tx = cls.env["pm.mpesa.transaction"]
 
+    def test_odoo_pay_now_is_hidden_on_rent_invoices(self):
+        self.env["ir.config_parameter"].sudo().set_param("account_payment.enable_portal_payment", "True")
+        self.assertFalse(self._invoice()._has_to_be_paid())
+
     def _turn_on(self):
         params = self.env["ir.config_parameter"].sudo()
         for key, value in (

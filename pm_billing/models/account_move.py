@@ -43,6 +43,16 @@ class AccountMove(models.Model):
                 and record.pm_lease_id
             )
 
+    def _has_to_be_paid(self):
+        """Odoo's own online "Pay Now" button is hidden on rent invoices.
+
+        Tenants pay with the M-Pesa "Pay now" button, so a second button would only confuse them.
+        """
+        self.ensure_one()
+        if self.sudo().pm_lease_id:
+            return False
+        return super()._has_to_be_paid()
+
     pm_has_water = fields.Boolean(string="Has a water line", compute="_compute_pm_water")
 
     pm_water_line_ids = fields.Many2many(

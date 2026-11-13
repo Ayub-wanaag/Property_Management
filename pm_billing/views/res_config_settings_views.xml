@@ -19,7 +19,7 @@
                         </setting>
                     </block>
                     <block title="M-Pesa STK Push" name="pm_billing_mpesa">
-                        <setting string="Pay with M-Pesa STK Push"
+                        <setting string="M-Pesa prompt (STK Push)"
                                  help="On: the tenant presses Pay now on the invoice, enters the M-Pesa PIN on their phone, and the payment and receipt are made automatically. Off: tenants see the manual payment details and send proof for staff to approve.">
                             <field name="pm_mpesa_enabled"/>
                         </setting>

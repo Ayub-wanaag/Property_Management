@@ -26,7 +26,7 @@ class ResConfigSettings(models.TransientModel):
     )
     # ----- M-Pesa STK Push -----
     pm_mpesa_enabled = fields.Boolean(
-        string="Pay with M-Pesa STK Push",
+        string="M-Pesa prompt (STK Push)",
         config_parameter="pm_billing.mpesa_enabled",
         help="On: tenants press Pay now on their invoice and get a prompt on their phone, and the payment is approved automatically. Off: tenants see the manual payment details and send proof, which staff approve.",
     )

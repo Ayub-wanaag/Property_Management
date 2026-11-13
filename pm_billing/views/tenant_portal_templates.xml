@@ -15,7 +15,23 @@
                 </div>
 
                 <t t-if="mpesa_enabled">
-                    <a t-att-href="mpesa_pay_url" class="btn btn-lg w-100 py-4 fs-4 mb-3 pm-btn-primary">Pay with M-Pesa</a>
+                    <div t-foreach="unpaid_invoices" t-as="inv" class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <strong t-out="inv.name"/>
+                                    <div class="text-muted small" t-if="inv.invoice_date_due">Due <span t-out="inv.invoice_date_due" t-options='{"widget": "date"}'/></div>
+                                </div>
+                                <strong class="fs-5" t-out="inv.amount_residual" t-options='{"widget": "monetary", "display_currency": inv.currency_id}'/>
+                            </div>
+                            <form method="post" action="/my/tenant/stk/pay">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input type="hidden" name="invoice_id" t-att-value="inv.id"/>
+                                <button type="submit" class="btn btn-lg w-100 py-3 fs-4 pm-btn-primary">Pay now</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div t-if="not unpaid_invoices" class="alert alert-success mb-3" role="alert">You have nothing to pay right now.</div>
                     <p class="text-center mb-3"><a href="/my/tenant/pay">Paid another way? Send proof</a></p>
                 </t>
                 <a t-else="" href="/my/tenant/pay" class="btn btn-lg w-100 py-4 fs-4 mb-3 pm-btn-primary">I have paid: send proof</a>
@@ -190,13 +206,13 @@
     </template>
 
     <!-- Pay now with M-Pesa: button on Odoo's own invoice page -->
-    <template id="portal_invoice_page_mpesa" name="Pay now with M-Pesa" inherit_id="account.portal_invoice_page">
+    <template id="portal_invoice_page_mpesa" name="Pay now" inherit_id="account.portal_invoice_page">
         <xpath expr="//t[@t-call='portal.portal_record_sidebar']//div[hasclass('o_download_pdf')]" position="before">
             <form t-if="invoice.pm_mpesa_can_pay" action="/my/tenant/stk/pay" method="post" class="d-block mb-2">
                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                 <input type="hidden" name="invoice_id" t-att-value="invoice.id"/>
                 <button type="submit" class="btn btn-primary d-block w-100">
-                    <i class="fa fa-fw fa-mobile"/> Pay now with M-Pesa
+                    <i class="fa fa-fw fa-mobile"/> Pay now
                 </button>
             </form>
         </xpath>
@@ -206,10 +222,10 @@
     <template id="tenant_stk_phone_page" name="Tenant: M-Pesa phone number">
         <t t-call="portal.portal_layout">
             <t t-set="no_breadcrumbs" t-value="1"/>
-            <t t-set="additional_title">Pay with M-Pesa</t>
+            <t t-set="additional_title">Pay now</t>
             <div class="container py-4 pm-portal">
                 <p><a t-att-href="invoice.get_portal_url()">&#8592; Back to the invoice</a></p>
-                <h1 class="h3 mb-1">Pay with M-Pesa</h1>
+                <h1 class="h3 mb-1">Pay now</h1>
                 <p class="text-muted mb-4">
                     Invoice <t t-out="invoice.name"/>:
                     <strong t-out="invoice.amount_residual" t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/>
@@ -233,9 +249,9 @@
     <template id="tenant_stk_wait_page" name="Tenant: M-Pesa payment result">
         <t t-call="portal.portal_layout">
             <t t-set="no_breadcrumbs" t-value="1"/>
-            <t t-set="additional_title">Pay with M-Pesa</t>
+            <t t-set="additional_title">Pay now</t>
             <div class="container py-4 pm-portal">
-                <h1 class="h3 mb-3">Pay with M-Pesa</h1>
+                <h1 class="h3 mb-3">Pay now</h1>
                 <t t-if="tx.state == 'pending'">
                     <div class="alert alert-info" role="alert">
                         <p class="mb-2"><strong>Check your phone.</strong></p>
